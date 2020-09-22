@@ -5,12 +5,13 @@
 #pragma once
 
 #include "../suite_collection.hpp"
+#include "minimal_request.hpp"
 
 class BasicSuiteCollection : public SuiteCollection {
 public:
     BasicSuiteCollection(const Configuration &configuration)
         : SuiteCollection(configuration) {
-
+        suites.push_back(std::make_unique<MinimalRequest>(configuration));
     }
 
     ~BasicSuiteCollection() = default;
