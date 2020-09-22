@@ -20,13 +20,13 @@ public:
 
     inline virtual void
     RunSuites() {
-        for (Suite &suite : suites) {
-            suite.Prepare();
-            suite.Run();
+        for (auto &suite : suites) {
+            suite->Prepare();
+            suite->Run();
         }
     }
 
-private:
-    std::vector<Suite> suites;
+protected:
+    std::vector<std::unique_ptr<Suite>> suites;
     const Configuration &configuration;
 };
