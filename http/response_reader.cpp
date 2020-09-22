@@ -7,6 +7,8 @@
 #include <array>
 #include <vector>
 
+#include "exception.hpp"
+
 HTTPResponse
 HTTPResponseReader::Read() {
     ReadVersion();
@@ -18,19 +20,25 @@ HTTPResponseReader::ReadVersion() {
     if (strict) {
         std::array<char, 9> buffer;
         connection->Read(buffer);
+        response.version = std::string(std::begin(buffer), std::end(buffer));
 
         if (buffer[0] != 'H' || buffer[1] != 'T' || buffer[2] != 'T' || buffer[3] != 'P' || buffer[4] != '/' || buffer[6] != '.') {
-            throw std::exception();
+            throw HTTPException(__PRETTY_FUNCTION__ , "HTTP Version not in format of \"HTTP/?.?\", was \"" + response.version + '"',
+                                "RFC 7230 Section 2.6",
+                                "https://tools.ietf.org/html/rfc7230#section-2.6");
         }
 
         if (buffer[5] != '1' || (buffer[7] != '0' && buffer[7] != '1')) {
-            throw std::exception();
+            throw HTTPException(__PRETTY_FUNCTION__ , "Invalid HTTP version major or minor. Should be one of \"HTTP/1.0\" or \"HTTP/1.1\", not \"" + response.version + '"',
+                                "RFC 7230 Section 2.6",
+                                "https://tools.ietf.org/html/rfc7230#section-2.6");
         }
 
         if (buffer[8] != ' ') {
-            throw std::exception();
+            throw HTTPException(__PRETTY_FUNCTION__ , std::string("A HTTP version should be followed by 0x20 SPACE, not a '") + buffer[8] + "'.",
+                                "RFC 7230 Section 3.1.2",
+                                "https://tools.ietf.org/html/rfc7230#section-3.1.2");
         }
-        response.version = std::string(std::begin(buffer), std::end(buffer));
     } else {
         std::vector<char> buffer;
         char c;
