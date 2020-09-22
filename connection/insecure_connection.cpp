@@ -64,3 +64,17 @@ InsecureConnection::Read(std::vector<char>::iterator it, std::size_t count) {
         it += ret;
     } while (count > 0);
 }
+
+void
+InsecureConnection::Write(const char *buffer, std::size_t count) {
+    do {
+        int ret = write(sockfd, buffer, count);
+
+        if (ret == -1) {
+            throw ConnectionException("writing", "Failed to write(2)");
+        }
+
+        count -= ret;
+        buffer += ret;
+    } while (count > 0);
+}

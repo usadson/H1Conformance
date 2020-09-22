@@ -24,6 +24,15 @@ public:
     virtual void
     Read(std::vector<char>::iterator iter, std::size_t amount) = 0;
 
+    virtual void
+    Write(const char *buffer, std::size_t count) = 0;
+
+    template<typename T>
+    inline void
+    Write(T t) {
+        return Write(&*std::cbegin(t), std::distance(std::cbegin(t), std::cend(t)));
+    }
+
     [[nodiscard]] inline constexpr const char *
     Address() const noexcept {
         return address;
