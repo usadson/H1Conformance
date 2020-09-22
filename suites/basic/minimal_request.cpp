@@ -6,13 +6,13 @@
 
 #include <iostream>
 
+#include "../../http/response_reader.hpp"
+
 void
 MinimalRequest::Run() {
     std::string request = "GET / HTTP/1.1\r\nHost: " + configuration.hostname + "\r\n\r\n";
-    std::cout << "Hello!\n";
-
     connection->Write(request);
-    while (true) {
-        std::cout << connection->ReadChar() << std::flush;
-    }
+
+    HTTPResponseReader reader(connection.get());
+    reader.Read();
 }
