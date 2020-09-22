@@ -22,7 +22,13 @@ public:
     ReadChar() = 0;
 
     virtual void
-    Read(std::vector<char>::iterator iter, std::size_t amount) = 0;
+    Read(char *buffer, std::size_t amount) = 0;
+
+    template<typename T>
+    inline void
+    Read(T t) {
+        return Read(&*std::begin(t), std::distance(std::begin(t), std::end(t)));
+    }
 
     virtual void
     Write(const char *buffer, std::size_t count) = 0;

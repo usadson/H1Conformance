@@ -16,7 +16,7 @@ public:
     ReadChar() override;
 
     void
-    Read(std::vector<char>::iterator, std::size_t count) override;
+    Read(char *buffer, std::size_t count) override;
 
     void
     Write(const char *buffer, std::size_t count) override;

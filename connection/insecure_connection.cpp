@@ -52,16 +52,16 @@ InsecureConnection::ReadChar() {
 }
 
 void
-InsecureConnection::Read(std::vector<char>::iterator it, std::size_t count) {
+InsecureConnection::Read(char *buffer, std::size_t count) {
     do {
-        int ret = read(sockfd, &*it, count);
+        int ret = read(sockfd, buffer, count);
 
         if (ret == -1) {
             throw ConnectionException("reading", "Failed to read(2)");
         }
 
         count -= ret;
-        it += ret;
+        buffer += ret;
     } while (count > 0);
 }
 
