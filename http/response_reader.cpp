@@ -18,9 +18,9 @@ HTTPResponseReader::Read() {
 void
 HTTPResponseReader::ReadVersion() {
     if (strict) {
-        std::array<char, 9> buffer;
+        std::array<char, 9> buffer{};
         connection->Read(buffer);
-        response.version = std::string(std::begin(buffer), std::end(buffer));
+        response.version = std::string(std::cbegin(buffer), std::cbegin(buffer) + 8);
 
         if (buffer[0] != 'H' || buffer[1] != 'T' || buffer[2] != 'T' || buffer[3] != 'P' || buffer[4] != '/' || buffer[6] != '.') {
             throw HTTPException(__PRETTY_FUNCTION__ , "HTTP Version not in format of \"HTTP/?.?\", was \"" + response.version + '"',
