@@ -4,15 +4,15 @@
 
 #include <iostream>
 
-#include "connection/exception.hpp"
-#include "connection/insecure_connection.hpp"
+#include "configuration.hpp"
+#include "suites/basic/basic_collection.hpp"
 
 int main() {
-    try {
-        auto con = InsecureConnection("128.199.37.70");
-    } catch (const ConnectionException &exception) {
-        std::cerr << "[ConnectionError] (" << exception.Stage() << ") " << exception.Message() << '\n';
-    }
+    Configuration configuration{ "127.0.0.1", 80, "localhost" };
+
+    auto collection = BasicSuiteCollection(configuration);
+
+    collection.RunSuites();
 
     return 0;
 }

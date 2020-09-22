@@ -9,4 +9,5 @@
 struct Configuration {
     const char *address;
     std::int16_t port;
+    std::string hostname;
 };
