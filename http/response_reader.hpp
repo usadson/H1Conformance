@@ -24,4 +24,7 @@ private:
 
     void
     ReadVersion();
+
+    void
+    ReadStatusCode();
 };

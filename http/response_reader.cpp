@@ -12,6 +12,7 @@
 HTTPResponse
 HTTPResponseReader::Read() {
     ReadVersion();
+    ReadStatusCode();
     return response;
 }
 
@@ -46,5 +47,38 @@ HTTPResponseReader::ReadVersion() {
             buffer.push_back(c);
         }
         response.version = std::string(std::begin(buffer), std::end(buffer));
+    }
+}
+
+constexpr bool
+EnsureCharIsDigit(char c) {
+    return c >= '0' && c <= '9';
+}
+
+constexpr std::uint8_t
+ConvertCharToSingleDigit(char c) noexcept {
+    return c - '0';
+}
+
+void
+HTTPResponseReader::ReadStatusCode() {
+    std::array<char, 3> buffer;
+    connection->Read(buffer);
+    if (!EnsureCharIsDigit(buffer[0]) || !EnsureCharIsDigit(buffer[1]) || !EnsureCharIsDigit(buffer[2])) {
+        throw HTTPException(__PRETTY_FUNCTION__ , std::string("A status-code consists of 3 DIGITS, was: '") + buffer[0] + buffer[1] + buffer[2],
+                            "RFC 7230 Section 3.1.2",
+                            "https://tools.ietf.org/html/rfc7230#section-3.1.2");
+        // TODO Maybe mention DIGIT spec?
+    }
+
+    response.version = ConvertCharToSingleDigit(buffer[0]) * 100 +
+                       ConvertCharToSingleDigit(buffer[1]) * 10 +
+                       ConvertCharToSingleDigit(buffer[2]);
+
+    char next = connection->ReadChar();
+    if (next != ' ') {
+        throw HTTPException(__PRETTY_FUNCTION__ , std::string("A status-code consists of 3 DIGITS and is followed by a 0x20 SPACE, was: '") + next,
+                            "RFC 7230 Section 3.1.2",
+                            "https://tools.ietf.org/html/rfc7230#section-3.1.2");
     }
 }
