@@ -8,6 +8,8 @@
 
 #include "../configuration.hpp"
 #include "suite.hpp"
+#include "../connection/exception.hpp"
+#include "../http/exception.hpp"
 
 class SuiteCollection {
 public:
@@ -21,8 +23,19 @@ public:
     inline virtual void
     RunSuites() {
         for (auto &suite : suites) {
-            suite->Prepare();
-            suite->Run();
+            try {
+                suite->Prepare();
+                suite->Run();
+            } catch (const ConnectionException &exception) {
+                std::cerr << "[ConnectionException] (" << exception.Stage() << ") " << exception.Message() << '\n';
+            } catch (const HTTPException &exception) {
+                std::cerr << "[HTTPException] An HTTP error was detected."
+                          << "\n\tTag: " << exception.Tag()
+                          << "\n\tMessage: " << exception.Message()
+                          << "\n\tSpecification: " << exception.Specification()
+                          << "\n\tSpecification URL: " << exception.URL()
+                          << '\n';
+            }
         }
     }
 
