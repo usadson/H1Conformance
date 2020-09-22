@@ -16,7 +16,7 @@ public:
     }
 
     virtual
-    ~SuiteCollection() = 0;
+    ~SuiteCollection() = default;
 
     inline virtual void
     RunSuites() {
