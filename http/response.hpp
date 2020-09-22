@@ -11,7 +11,7 @@
 
 struct HTTPResponse {
     std::string version;
-    std::int32_t statusCode;
+    std::uint16_t statusCode;
     std::string reasonPhrase;
 
     std::vector<HTTPHeader> headers;
