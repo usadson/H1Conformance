@@ -26,7 +26,7 @@ public:
 
     template<typename T>
     inline void
-    Read(T t) {
+    Read(T &t) {
         return Read(&*std::begin(t), std::distance(std::begin(t), std::end(t)));
     }
 
@@ -35,7 +35,7 @@ public:
 
     template<typename T>
     inline void
-    Write(T t) {
+    Write(const T &t) {
         return Write(&*std::cbegin(t), std::distance(std::cbegin(t), std::cend(t)));
     }
 
