@@ -9,6 +9,19 @@
 
 class HTTPResponseReader {
 public:
+    inline
+    HTTPResponseReader(Connection *connection, bool strict=true) noexcept
+        : connection(connection), strict(strict) {
+    }
+
     HTTPResponse
-    Read(Connection &connection);
+    Read();
+
+private:
+    Connection *connection;
+    bool strict;
+    HTTPResponse response{};
+
+    void
+    ReadVersion();
 };

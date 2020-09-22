@@ -4,8 +4,39 @@
 
 #include "response_reader.hpp"
 
-HTTPResponse
-HTTPResponseReader::Read(Connection &connection) {
+#include <array>
+#include <vector>
 
-    return {};
+HTTPResponse
+HTTPResponseReader::Read() {
+    ReadVersion();
+    return response;
+}
+
+void
+HTTPResponseReader::ReadVersion() {
+    if (strict) {
+        std::array<char, 9> buffer;
+        connection->Read(buffer);
+
+        if (buffer[0] != 'H' || buffer[1] != 'T' || buffer[2] != 'T' || buffer[3] != 'P' || buffer[4] != '/' || buffer[6] != '.') {
+            throw std::exception();
+        }
+
+        if (buffer[5] != '1' || (buffer[7] != '0' && buffer[7] != '1')) {
+            throw std::exception();
+        }
+
+        if (buffer[8] != ' ') {
+            throw std::exception();
+        }
+        response.version = std::string(std::begin(buffer), std::end(buffer));
+    } else {
+        std::vector<char> buffer;
+        char c;
+        while ((c = connection->ReadChar()) != ' ') {
+            buffer.push_back(c);
+        }
+        response.version = std::string(std::begin(buffer), std::end(buffer));
+    }
 }
