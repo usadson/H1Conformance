@@ -10,8 +10,8 @@
 class HTTPException : public std::exception {
 public:
     inline
-    HTTPException(std::string tag, std::string message)
-            : tag(tag), message(message) {
+    HTTPException(std::string tag, std::string message, std::string specification, std::string url)
+            : tag(tag), message(message), specification(specification), url(url) {
     }
 
     [[nodiscard]] inline constexpr const std::string &
@@ -24,7 +24,19 @@ public:
         return tag;
     }
 
+    [[nodiscard]] inline constexpr const std::string &
+    Specification() const noexcept {
+        return specification;
+    }
+
+    [[nodiscard]] inline constexpr const std::string &
+    URL() const noexcept {
+        return url;
+    }
+
 private:
     const std::string tag;
     const std::string message;
+    const std::string specification;
+    const std::string url;
 };
