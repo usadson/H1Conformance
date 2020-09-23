@@ -10,7 +10,7 @@
 
 class InvalidRequestLine : public Suite {
 public:
-    InvalidRequestLine(const Configuration &configuration, const std::string &collectionName) :
+    InvalidRequestLine(Configuration &configuration, const std::string &collectionName) :
             Suite(configuration, collectionName, "InvalidRequestLine") {
     }
 

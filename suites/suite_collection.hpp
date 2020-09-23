@@ -13,7 +13,7 @@
 
 class SuiteCollection {
 public:
-    SuiteCollection(const Configuration &configuration) noexcept
+    SuiteCollection(Configuration &configuration) noexcept
         : configuration(configuration) {
     }
 
@@ -47,5 +47,5 @@ public:
 
 protected:
     std::vector<std::unique_ptr<Suite>> suites;
-    const Configuration &configuration;
+    Configuration &configuration;
 };

@@ -12,7 +12,7 @@
 
 class BasicSuiteCollection : public SuiteCollection {
 public:
-    BasicSuiteCollection(const Configuration &configuration)
+    BasicSuiteCollection(Configuration &configuration)
         : SuiteCollection(configuration) {
         suites.push_back(std::make_unique<HostHeader>(configuration, name));
         suites.push_back(std::make_unique<InvalidRequestLine>(configuration, name));

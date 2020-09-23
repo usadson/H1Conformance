@@ -8,7 +8,7 @@
 
 class MinimalRequest : public Suite {
 public:
-    MinimalRequest(const Configuration &configuration, const std::string &collectionName) :
+    MinimalRequest(Configuration &configuration, const std::string &collectionName) :
         Suite(configuration, collectionName, "MinimalRequest") {
     }
 

@@ -42,7 +42,7 @@ FailureHook(std::stringstream *stream, const Suite *suite) {
 
 class Suite {
 public:
-    Suite(const Configuration &configuration, const std::string &collectionName, const char *suiteName) noexcept :
+    Suite(Configuration &configuration, const std::string &collectionName, const char *suiteName) noexcept :
         configuration(configuration), collectionName(collectionName), suiteName(suiteName) {
     }
 
@@ -87,7 +87,7 @@ public:
 
 protected:
     std::unique_ptr<Connection> connection;
-    const Configuration &configuration;
+    Configuration &configuration;
 
     const std::string &collectionName;
     const char *suiteName;

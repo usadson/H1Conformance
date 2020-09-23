@@ -8,7 +8,7 @@
 
 class HostHeader : public Suite {
 public:
-    HostHeader(const Configuration &configuration, const std::string &collectionName) :
+    HostHeader(Configuration &configuration, const std::string &collectionName) :
             Suite(configuration, collectionName, "LackingHostHeader") {
     }
 
