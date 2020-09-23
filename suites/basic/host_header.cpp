@@ -21,14 +21,18 @@ HostHeader::RunWith() {
     connection->Write("GET / HTTP/1.1\r\nHost: " + configuration.hostname + "\r\n\r\n");
     const HTTPResponse response = HTTPResponseReader(connection.get()).Read();
 
-    if (response.statusCode >= 400) {
+    if (response.statusCode <= 0 || response.statusCode >= 400) {
         Failure() << "RunWith: Failed with status code " << response.statusCode << " and reason phrase \"" << response.reasonPhrase << '"';
     }
 }
 
 void
 HostHeader::RunWithMultiple() {
-
+    connection->Write("GET / HTTP/1.1\r\nHost: " + configuration.hostname + "\r\nHost: " + configuration.hostname + "\r\n\r\n");
+    const HTTPResponse response = HTTPResponseReader(connection.get()).Read();
+    if (response.statusCode != 400) {
+        Failure() << "RunWithout: multiple 'Host' headers were sent and the server accepted it with status-code: " << response.statusCode << ". Exactly one Host header is required as per RFC 7230 Section 5.4. and if it isn't present, or there are more than one, the server must respond with status-code 404 (Bad Request)";
+    }
 }
 
 void
