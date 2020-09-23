@@ -9,33 +9,48 @@
 #include <string>
 #include <functional>
 
-template<typename FunctionType = std::nullptr_t, typename StreamType = std::ostream &>
+template<typename FunctionType = std::nullptr_t, typename StreamType = std::ostream>
 class StreamWrapper {
 public:
     template<typename A = const char *, typename B = const char *> inline
-    StreamWrapper(const A &prefix = "", const B &suffix = "\n", StreamType stream = std::cout, FunctionType destructorHookFunction=nullptr)
-        : stream(stream), suffix(suffix), destructorHookFunction(destructorHookFunction) {
-        stream << prefix;
+    StreamWrapper(const A &prefix = "", const B &suffix = "\n", FunctionType destructorHookFunction=nullptr, StreamType *stream=&std::cout, bool ownsStream=false)
+        : stream(stream), suffix(suffix), destructorHookFunction(destructorHookFunction), owning(ownsStream) {
+        *stream << prefix;
     }
 
     inline
     ~StreamWrapper() {
-        stream << suffix;
+        *stream << suffix;
         if constexpr (std::is_invocable<FunctionType>::value) {
             std::invoke(destructorHookFunction);
-        } else if constexpr (std::is_invocable<FunctionType, StreamWrapper *>::value) {
-            std::invoke(destructorHookFunction, this);
+        } else if constexpr (std::is_invocable<FunctionType, StreamType *>::value) {
+            std::invoke(destructorHookFunction, stream);
+        }
+
+        if (owning) {
+            delete stream;
         }
     }
 
     template<typename T>
     StreamWrapper &operator<<(const T &t) {
-        stream << t;
+        *stream << t;
         return *this;
     }
 
+    [[nodiscard]] constexpr inline StreamType *
+    Stream() noexcept {
+        return stream;
+    }
+
+    [[nodiscard]] constexpr inline const StreamType *
+    Stream() const noexcept {
+        return stream;
+    }
+
 private:
-    StreamType stream;
+    StreamType *stream;
+    bool owning = false;
     const std::string suffix;
     const FunctionType destructorHookFunction;
 };
