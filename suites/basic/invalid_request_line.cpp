@@ -17,10 +17,8 @@ void
 InvalidRequestLine::RunMethod() {
     const std::string suffix = " / HTTP/1.1\r\nHost: " + configuration.hostname + "\r\n\r\n";
     for (std::size_t i = 0; i < 15; i++) {
-        const auto method = configuration.utils.GenerateToken();
-
+        const auto method = configuration.utils.GenerateRandomLengthToken();
         const auto statusCode = Request(method + suffix);
-        std::cout << method << '\n';
 
         if (statusCode >= 400) {
             auto message = Failure()
