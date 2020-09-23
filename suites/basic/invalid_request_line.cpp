@@ -14,7 +14,7 @@ InvalidRequestLine::Request(const std::string &request) {
 }
 
 void
-InvalidRequestLine::RunMethod() {
+InvalidRequestLine::RunMethodValid() {
     const std::string suffix = " / HTTP/1.1\r\nHost: " + configuration.hostname + "\r\n\r\n";
     for (std::size_t i = 0; i < 15; i++) {
         const auto method = configuration.utils.GenerateRandomLengthToken();
@@ -33,5 +33,5 @@ InvalidRequestLine::RunMethod() {
 
 void
 InvalidRequestLine::Run() {
-    RunMethod();
+    RunMethodValid();
 }

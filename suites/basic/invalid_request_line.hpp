@@ -22,6 +22,6 @@ private:
     Request(const std::string &request);
 
     void
-    RunMethod();
+    RunMethodValid();
 };
 
