@@ -23,4 +23,6 @@ MinimalRequest::Run() {
     } else {
         throw std::exception();
     }
+
+    Warning() << "Tset!";
 }
