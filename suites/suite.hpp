@@ -46,6 +46,11 @@ public:
         configuration(configuration), collectionName(collectionName), suiteName(suiteName) {
     }
 
+    virtual inline void
+    Reconnect() {
+        Prepare();
+    }
+
     virtual
     ~Suite() = default;
 
