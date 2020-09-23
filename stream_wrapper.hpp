@@ -9,22 +9,27 @@
 #include <string>
 #include <functional>
 
-template<typename FunctionType = std::nullptr_t, typename StreamType = std::ostream>
+template<typename FunctionType = std::nullptr_t, typename StreamType = std::ostream, typename UserDataType = std::nullptr_t>
 class StreamWrapper {
 public:
     template<typename A = const char *, typename B = const char *> inline
-    StreamWrapper(const A &prefix = "", const B &suffix = "\n", FunctionType destructorHookFunction=nullptr, StreamType *stream=&std::cout, bool ownsStream=false)
-        : stream(stream), suffix(suffix), destructorHookFunction(destructorHookFunction), owning(ownsStream) {
+    StreamWrapper(StreamType *stream=nullptr, A prefix = "", B suffix = "\n", FunctionType destructorHookFunction=nullptr, bool ownsStream=false, UserDataType userData = nullptr)
+        : stream(stream), suffix(suffix), destructorHookFunction(destructorHookFunction), owning(ownsStream), userData(userData) {
         *stream << prefix;
     }
 
     inline
     ~StreamWrapper() {
         *stream << suffix;
+
         if constexpr (std::is_invocable<FunctionType>::value) {
             std::invoke(destructorHookFunction);
         } else if constexpr (std::is_invocable<FunctionType, StreamType *>::value) {
             std::invoke(destructorHookFunction, stream);
+        } else if constexpr (std::is_invocable<FunctionType, StreamType *, UserDataType>::value) {
+            std::invoke(destructorHookFunction, stream, userData);
+        } else if constexpr (std::is_invocable<FunctionType, UserDataType>::value) {
+            std::invoke(destructorHookFunction, userData);
         }
 
         if (owning) {
@@ -53,4 +58,5 @@ private:
     bool owning = false;
     const std::string suffix;
     const FunctionType destructorHookFunction;
+    const UserDataType userData;
 };
