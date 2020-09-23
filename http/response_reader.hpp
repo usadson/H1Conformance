@@ -27,4 +27,8 @@ private:
 
     void
     ReadStatusCode();
+
+    void
+    ReadReasonPhrase();
+
 };

@@ -6,6 +6,7 @@
 
 #include <array>
 #include <vector>
+#include <sstream>
 
 #include "exception.hpp"
 
@@ -13,6 +14,7 @@ HTTPResponse
 HTTPResponseReader::Read() {
     ReadVersion();
     ReadStatusCode();
+    ReadReasonPhrase();
     return response;
 }
 
@@ -81,4 +83,58 @@ HTTPResponseReader::ReadStatusCode() {
                             "RFC 7230 Section 3.1.2",
                             "https://tools.ietf.org/html/rfc7230#section-3.1.2");
     }
+}
+
+bool IsValidReasonPhraseCharacter(char c) {
+    return c == '\t' || (c >= 0x20 && c <= 0x7E);
+}
+
+void
+HTTPResponseReader::ReadReasonPhrase() {
+    bool lastWasCR = false;
+    std::vector<char> buffer;
+
+    while (true) {
+        char c = connection->ReadChar();
+
+        if (lastWasCR) {
+            if (c == '\n') {
+                break;
+            } else if (strict) {
+                throw HTTPException(__PRETTY_FUNCTION__ , std::string("A reason-phrase should be ended with a CRLF, not a CR, LF and no dangling CR may be present"),
+                                    "RFC 7230 Section 3.1.2",
+                                    "https://tools.ietf.org/html/rfc7230#section-3.1.2");
+            } else {
+                lastWasCR = false;
+                continue;
+            }
+        }
+
+        if (c == '\n') {
+            if (strict) {
+                throw HTTPException(__PRETTY_FUNCTION__ , std::string("A reason-phrase should be ended with a CRLF, not a CR, LF and no dangling CR may be present"),
+                                    "RFC 7230 Section 3.1.2",
+                                    "https://tools.ietf.org/html/rfc7230#section-3.1.2");
+            } else {
+                break;
+            }
+        }
+
+        if (c == '\r') {
+            lastWasCR = true;
+            continue;
+        }
+
+        if (!IsValidReasonPhraseCharacter(c)) {
+            std::stringstream stream;
+            stream << "A reason-phrase may only contain a HTAB, SP or VCHAR, not a '" << c << "' 0x" << std::hex << static_cast<std::uint16_t>(c);
+            throw HTTPException(__PRETTY_FUNCTION__ , stream.str(),
+                                "RFC 7230 Section 3.1.2",
+                                "https://tools.ietf.org/html/rfc7230#section-3.1.2");
+        }
+
+        buffer.push_back(c);
+    }
+
+    response.reasonPhrase = std::string(std::cbegin(buffer), std::cend(buffer));
 }
