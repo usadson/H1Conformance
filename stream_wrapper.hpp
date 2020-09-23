@@ -7,18 +7,25 @@
 #include <iostream>
 #include <ostream>
 #include <string>
+#include <functional>
 
+template<typename FunctionType = std::nullptr_t>
 class StreamWrapper {
 public:
     template<typename A = const char *, typename B = const char *> inline
-    StreamWrapper(const A &prefix = "", const B &suffix = "\n", std::ostream &stream = std::cout)
-        : stream(stream), suffix(suffix) {
+    StreamWrapper(const A &prefix = "", const B &suffix = "\n", std::ostream &stream = std::cout, FunctionType destructorHookFunction=nullptr)
+        : stream(stream), suffix(suffix), destructorHookFunction(destructorHookFunction) {
         stream << prefix;
     }
 
     inline
     ~StreamWrapper() {
         stream << suffix;
+        if constexpr (std::is_invocable<FunctionType>::value) {
+            std::invoke(destructorHookFunction);
+        } else if constexpr (std::is_invocable<FunctionType, StreamWrapper *>::value) {
+            std::invoke(destructorHookFunction, this);
+        }
     }
 
     template<typename T>
@@ -30,4 +37,5 @@ public:
 private:
     std::ostream &stream;
     const std::string suffix;
+    const FunctionType destructorHookFunction;
 };
