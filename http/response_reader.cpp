@@ -73,9 +73,9 @@ HTTPResponseReader::ReadStatusCode() {
         // TODO Maybe mention DIGIT spec?
     }
 
-    response.version = ConvertCharToSingleDigit(buffer[0]) * 100 +
-                       ConvertCharToSingleDigit(buffer[1]) * 10 +
-                       ConvertCharToSingleDigit(buffer[2]);
+    response.statusCode = ConvertCharToSingleDigit(buffer[0]) * 100 +
+                          ConvertCharToSingleDigit(buffer[1]) * 10 +
+                          ConvertCharToSingleDigit(buffer[2]);
 
     char next = connection->ReadChar();
     if (next != ' ') {
