@@ -70,6 +70,16 @@ public:
         return StreamWrapper(&std::cout, std::string("[Warning] (") + collectionName + '/' + suiteName + ") ");
     }
 
+    [[nodiscard]] constexpr inline const std::string &
+    CollectionName() const noexcept {
+        return collectionName;
+    }
+
+    [[nodiscard]] constexpr inline const char *
+    Name() const noexcept {
+        return suiteName;
+    }
+
 protected:
     std::unique_ptr<Connection> connection;
     const Configuration &configuration;
