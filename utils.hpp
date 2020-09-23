@@ -18,6 +18,12 @@ public:
     [[nodiscard]] std::string
     GenerateRandomLengthToken(std::size_t min=1, std::size_t max=15) noexcept;
 
+    template<typename Int=std::size_t>
+    [[nodiscard]] Int
+    GenerateRandomNumber(Int min=std::numeric_limits<Int>::min(), Int max=std::numeric_limits<Int>::max()) {
+        return std::uniform_int_distribution<Int>(min, max)(engine);
+    }
+
 private:
     std::random_device device;
     std::default_random_engine engine{device()};
