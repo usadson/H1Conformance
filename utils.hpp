@@ -16,7 +16,7 @@ public:
     GenerateToken(std::size_t maxLength=15) noexcept;
 
     [[nodiscard]] std::string
-    GenerateRandomLengthToken(std::size_t maxLength) noexcept;
+    GenerateRandomLengthToken(std::size_t min=1, std::size_t max=15) noexcept;
 
 private:
     std::random_device device;

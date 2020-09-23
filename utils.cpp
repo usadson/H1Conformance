@@ -27,6 +27,6 @@ Utils::GenerateToken(std::size_t maxLength) noexcept {
 }
 
 std::string
-Utils::GenerateRandomLengthToken(std::size_t maxLength) noexcept {
-    return GenerateToken(std::uniform_int_distribution<std::size_t>(0, maxLength)(engine));
+Utils::GenerateRandomLengthToken(std::size_t min, std::size_t max) noexcept {
+    return GenerateToken(std::uniform_int_distribution<std::size_t>(min, max)(engine));
 }
