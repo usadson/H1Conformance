@@ -5,9 +5,11 @@
 #pragma once
 
 #include <cstdint>
+#include "utils.hpp"
 
 struct Configuration {
     const char *address;
     std::int16_t port;
     std::string hostname;
+    Utils utils{};
 };
