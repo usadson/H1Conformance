@@ -27,7 +27,7 @@ public:
         connection = std::make_unique<InsecureConnection>(configuration.address, configuration.port);
     }
 
-    inline StreamWrapper
+    inline StreamWrapper<std::nullptr_t>
     Warning() {
         return StreamWrapper(std::string("[Warning] (") + collectionName + '/' + suiteName + ") ");
     }
