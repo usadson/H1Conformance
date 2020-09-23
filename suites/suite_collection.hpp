@@ -35,6 +35,12 @@ public:
                           << "\n\tSpecification: " << exception.Specification()
                           << "\n\tSpecification URL: " << exception.URL()
                           << '\n';
+            } catch (const SuiteFailureException &exception) {
+                // TODO Check if other suites must be ran if previous failed
+                std::cerr << "Suite " << exception.Suite().CollectionName() << "." << exception.Suite().Name()
+                          << " failed: " << exception.Message() << '\n';
+            } catch (const std::exception &exception) {
+                std::cerr << "Suite exception: " << exception.what() << '\n';
             }
         }
     }
