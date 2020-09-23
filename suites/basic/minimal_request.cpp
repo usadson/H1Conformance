@@ -14,5 +14,13 @@ MinimalRequest::Run() {
     connection->Write(request);
 
     HTTPResponseReader reader(connection.get());
-    reader.Read();
+    const HTTPResponse response = reader.Read();
+
+    if (response.statusCode < 400) {
+        if ((response.statusCode > 208 && response.statusCode < 300) || (response.statusCode > 309 && response.statusCode < 400) || response.statusCode == 306 || response.statusCode >= 600) {
+            std::cerr << "Warning: unregistered status-code: " << response.statusCode << " with reason-phrase: \"" << response.reasonPhrase << "\"\n";
+        }
+    } else {
+        throw std::exception();
+    }
 }
