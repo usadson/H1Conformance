@@ -17,12 +17,15 @@ MinimalRequest::Run() {
     const HTTPResponse response = reader.Read();
 
     if (response.statusCode < 400) {
-        if ((response.statusCode > 208 && response.statusCode < 300) || (response.statusCode > 309 && response.statusCode < 400) || response.statusCode == 306 || response.statusCode >= 600) {
-            std::cerr << "Warning: unregistered status-code: " << response.statusCode << " with reason-phrase: \"" << response.reasonPhrase << "\"\n";
+        if ((response.statusCode > 208 && response.statusCode < 300) || (response.statusCode > 309 && response.statusCode < 400) || response.statusCode == 306) {
+            Warning() << "Warning: unregistered status-code: " << response.statusCode
+                      << " with reason-phrase: \"" << response.reasonPhrase << "\"."
+                      "Status codes should (generally) be registered with IANA, although this is not required as per RFC 7231 Section 8.2.2. "
+                      "All registered status codes can be found at https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml";
         }
+    } else if (response.statusCode >= 600) {
+        // TODO
     } else {
-        throw std::exception();
+        std::exception();
     }
-
-    Warning() << "Tset!";
 }
