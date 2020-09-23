@@ -19,7 +19,7 @@ public:
     }
 
     inline
-    ~StreamWrapper() {
+    ~StreamWrapper() noexcept(false) {
         *stream << suffix;
 
         if constexpr (std::is_invocable<FunctionType>::value) {
