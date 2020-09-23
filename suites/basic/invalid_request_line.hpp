@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <string>
+
 #include "../suite.hpp"
 
 class InvalidRequestLine : public Suite {
@@ -15,5 +17,8 @@ public:
     void
     Run() override;
 
+private:
+    [[nodiscard]] std::uint16_t
+    Request(const std::string &request);
 };
 
