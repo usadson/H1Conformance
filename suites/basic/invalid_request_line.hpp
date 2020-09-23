@@ -20,5 +20,8 @@ public:
 private:
     [[nodiscard]] std::uint16_t
     Request(const std::string &request);
+
+    void
+    RunMethod();
 };
 
