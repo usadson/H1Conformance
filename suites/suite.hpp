@@ -11,9 +11,33 @@
 #include "../configuration.hpp"
 #include "../stream_wrapper.hpp"
 
+class Suite;
+
+class SuiteFailureException : public std::exception {
+public:
+    inline
+    SuiteFailureException(const Suite &suite, std::string &&message) noexcept
+        : suite(suite), message(message) {
+    }
+
+    [[nodiscard]] constexpr inline const std::string &
+    Message() const noexcept {
+        return message;
+    }
+
+    [[nodiscard]] constexpr inline const Suite &
+    Suite() const noexcept {
+        return suite;
+    }
+
+private:
+    const class Suite &suite;
+    const std::string message;
+};
+
 inline void
-FailureHook(std::stringstream *stream) {
-    std::cout << "Test?\n";
+FailureHook(std::stringstream *stream, const Suite *suite) {
+    throw SuiteFailureException(*suite, stream->str());
 }
 
 class Suite {
@@ -36,14 +60,14 @@ public:
     // Failure() should be called when a suite doesn't pass.
     // Use the StreamWrapper<...> to tell the user what went wrong.
 
-    inline StreamWrapper<void (*)(std::stringstream *), std::stringstream>
+    inline StreamWrapper<void (*)(std::stringstream *, const Suite *), std::stringstream, Suite *>
     Failure() {
-        return StreamWrapper("", "", &FailureHook, new std::stringstream, true);
+        return StreamWrapper(new std::stringstream, "", "", &FailureHook, true, this);
     }
 
     inline StreamWrapper<std::nullptr_t>
     Warning() {
-        return StreamWrapper(std::string("[Warning] (") + collectionName + '/' + suiteName + ") ");
+        return StreamWrapper(&std::cout, std::string("[Warning] (") + collectionName + '/' + suiteName + ") ");
     }
 
 protected:
