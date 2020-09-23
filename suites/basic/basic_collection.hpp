@@ -5,7 +5,9 @@
 #pragma once
 
 #include "../suite_collection.hpp"
+
 #include "host_header.hpp"
+#include "invalid_request_line.hpp"
 #include "minimal_request.hpp"
 
 class BasicSuiteCollection : public SuiteCollection {
@@ -13,6 +15,7 @@ public:
     BasicSuiteCollection(const Configuration &configuration)
         : SuiteCollection(configuration) {
         suites.push_back(std::make_unique<HostHeader>(configuration, name));
+        suites.push_back(std::make_unique<InvalidRequestLine>(configuration, name));
         suites.push_back(std::make_unique<MinimalRequest>(configuration, name));
     }
 
