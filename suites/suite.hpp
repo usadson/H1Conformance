@@ -5,10 +5,16 @@
 #pragma once
 
 #include <memory>
+#include <sstream>
 
 #include "../connection/insecure_connection.hpp"
 #include "../configuration.hpp"
 #include "../stream_wrapper.hpp"
+
+inline void
+FailureHook(std::stringstream *stream) {
+    std::cout << "Test?\n";
+}
 
 class Suite {
 public:
@@ -25,6 +31,14 @@ public:
     virtual inline void
     Prepare() {
         connection = std::make_unique<InsecureConnection>(configuration.address, configuration.port);
+    }
+
+    // Failure() should be called when a suite doesn't pass.
+    // Use the StreamWrapper<...> to tell the user what went wrong.
+
+    inline StreamWrapper<void (*)(std::stringstream *), std::stringstream>
+    Failure() {
+        return StreamWrapper("", "", &FailureHook, new std::stringstream, true);
     }
 
     inline StreamWrapper<std::nullptr_t>
