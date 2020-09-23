@@ -23,10 +23,9 @@ MinimalRequest::Run() {
                       "Status codes should (generally) be registered with IANA, although this is not required as per RFC 7231 Section 8.2.2. "
                       "All registered status codes can be found at https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml";
         }
-        Failure() << "Test!";
     } else if (response.statusCode >= 600) {
-        Failure() << "Invalid status code class: " << response.statusCode << " with ";
+        Failure() << "Invalid status code class: " << response.statusCode << " and reason phrase \"" << response.reasonPhrase << '"';
     } else {
-        std::exception();
+        Failure() << "Failed with status code: " << response.statusCode << " and reason phrase \"" << response.reasonPhrase << '"';
     }
 }
