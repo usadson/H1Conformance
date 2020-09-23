@@ -11,8 +11,11 @@ class BasicSuiteCollection : public SuiteCollection {
 public:
     BasicSuiteCollection(const Configuration &configuration)
         : SuiteCollection(configuration) {
-        suites.push_back(std::make_unique<MinimalRequest>(configuration));
+        suites.push_back(std::make_unique<MinimalRequest>(configuration, name));
     }
 
     ~BasicSuiteCollection() = default;
+
+private:
+    const std::string name = "BasicSuite";
 };
