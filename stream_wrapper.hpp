@@ -9,11 +9,11 @@
 #include <string>
 #include <functional>
 
-template<typename FunctionType = std::nullptr_t>
+template<typename FunctionType = std::nullptr_t, typename StreamType = std::ostream &>
 class StreamWrapper {
 public:
     template<typename A = const char *, typename B = const char *> inline
-    StreamWrapper(const A &prefix = "", const B &suffix = "\n", std::ostream &stream = std::cout, FunctionType destructorHookFunction=nullptr)
+    StreamWrapper(const A &prefix = "", const B &suffix = "\n", StreamType stream = std::cout, FunctionType destructorHookFunction=nullptr)
         : stream(stream), suffix(suffix), destructorHookFunction(destructorHookFunction) {
         stream << prefix;
     }
@@ -35,7 +35,7 @@ public:
     }
 
 private:
-    std::ostream &stream;
+    StreamType stream;
     const std::string suffix;
     const FunctionType destructorHookFunction;
 };
