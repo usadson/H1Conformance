@@ -54,7 +54,7 @@ InsecureConnection::ReadChar() {
 void
 InsecureConnection::Read(char *buffer, std::size_t count) {
     do {
-        int ret = read(sockfd, buffer, count);
+        ssize_t ret = read(sockfd, buffer, count);
 
         if (ret == -1) {
             throw ConnectionException("reading", "Failed to read(2)");
@@ -68,7 +68,7 @@ InsecureConnection::Read(char *buffer, std::size_t count) {
 void
 InsecureConnection::Write(const char *buffer, std::size_t count) {
     do {
-        int ret = write(sockfd, buffer, count);
+        ssize_t ret = write(sockfd, buffer, count);
 
         if (ret == -1) {
             throw ConnectionException("writing", "Failed to write(2)");
