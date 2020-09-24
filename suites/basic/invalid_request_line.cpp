@@ -46,8 +46,8 @@ InvalidRequestLine::RunMethodInvalid() {
         auto method = configuration.utils.GenerateRandomLengthToken();
 
         for (std::size_t i = 0; i < 3; i++) {
-            auto iindex = configuration.utils.GenerateRandomNumber<std::size_t>(0, illegalCharacters.size());
-            auto oindex = configuration.utils.GenerateRandomNumber<std::size_t>(0, method.length());
+            auto iindex = configuration.utils.GenerateRandomNumber<std::size_t>(0, illegalCharacters.size() - 1);
+            auto oindex = configuration.utils.GenerateRandomNumber<std::size_t>(0, method.length() - 1);
             method[oindex] = illegalCharacters[iindex];
         }
 
