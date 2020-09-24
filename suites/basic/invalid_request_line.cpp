@@ -20,7 +20,7 @@ InvalidRequestLine::RunMethodValid() {
         const auto method = configuration.utils.GenerateRandomLengthToken();
         const auto statusCode = Request(method + suffix);
 
-        if (statusCode >= 400) {
+        if (statusCode >= 400 && statusCode < 500) {
             auto message = Failure()
                     << "Server denied valid method: \"" << method
                     << "\" with status-code: " << statusCode
@@ -53,7 +53,7 @@ InvalidRequestLine::RunMethodInvalid() {
 
         const auto statusCode = Request(method + suffix);
 
-        if (statusCode >= 400) {
+        if (statusCode >= 400 && statusCode < 500) {
             auto message = Failure()
                     << "Server denied valid method: \"" << method
                     << "\" with status-code: " << statusCode
