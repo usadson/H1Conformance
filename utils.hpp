@@ -27,5 +27,5 @@ public:
 private:
     std::random_device device;
     std::default_random_engine engine{device()};
-    std::uniform_int_distribution<char> vcharDistribution{0x20, 0x7E};
+    std::uniform_int_distribution<char> vcharDistribution{0x21, 0x7E};
 };
