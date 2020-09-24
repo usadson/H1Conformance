@@ -9,7 +9,7 @@
 
 class HTTPResponseReader {
 public:
-    inline
+    inline explicit
     HTTPResponseReader(Connection *connection, bool strict=true) noexcept
         : connection(connection), strict(strict) {
     }

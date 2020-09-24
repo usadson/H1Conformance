@@ -12,7 +12,8 @@
 template<typename FunctionType = std::nullptr_t, typename StreamType = std::ostream, typename UserDataType = std::nullptr_t>
 class StreamWrapper {
 public:
-    template<typename A = const char *, typename B = const char *> inline
+    template<typename A = const char *, typename B = const char *>
+    inline explicit
     StreamWrapper(StreamType *stream=nullptr, A prefix = "", B suffix = "\n", FunctionType destructorHookFunction=nullptr, bool ownsStream=false, UserDataType userData = nullptr)
         : stream(stream), suffix(suffix), destructorHookFunction(destructorHookFunction), owning(ownsStream), userData(userData) {
         *stream << prefix;

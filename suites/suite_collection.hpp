@@ -13,7 +13,7 @@
 
 class SuiteCollection {
 public:
-    SuiteCollection(Configuration &configuration) noexcept
+    explicit SuiteCollection(Configuration &configuration) noexcept
         : configuration(configuration) {
     }
 
