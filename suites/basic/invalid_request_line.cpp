@@ -53,9 +53,9 @@ InvalidRequestLine::RunMethodInvalid() {
 
         const auto statusCode = Request(method + suffix);
 
-        if (statusCode >= 400 && statusCode < 500) {
+        if (statusCode < 400 || statusCode >= 500) {
             auto message = Failure()
-                    << "Server denied valid method: \"" << method
+                    << "Server accepted invalid method: \"" << method
                     << "\" with status-code: " << statusCode
                     << ". A method is defined as a token by RFC 7230 Section 3.1.1. A token is defined as 1*tchar by RFC 7230 Section 3.2.6. A tchar is defined as a VCHAR without delimiters.";
         }
