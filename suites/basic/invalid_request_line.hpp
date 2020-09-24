@@ -23,5 +23,8 @@ private:
 
     void
     RunMethodValid();
+
+    void
+    RunMethodInvalid();
 };
 
