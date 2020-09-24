@@ -19,7 +19,7 @@ Utils::GenerateTChar() noexcept {
 
 std::string
 Utils::GenerateToken(std::size_t maxLength) noexcept {
-    std::string buffer(' ', maxLength);
+    std::string buffer(maxLength, ' ');
     std::generate(std::begin(buffer), std::end(buffer), [this]() {
         return GenerateTChar();
     });
