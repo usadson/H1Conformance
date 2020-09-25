@@ -14,5 +14,5 @@ RequestTarget::Request(const std::string &request) {
 
 void
 RequestTarget::Run() {
-    
+
 }

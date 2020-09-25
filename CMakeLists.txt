@@ -8,6 +8,7 @@ set(SOURCES
         suites/basic/host_header.cpp
         suites/basic/minimal_request.cpp
         suites/startline/method.cpp
+        suites/startline/request_target.cpp
         suites/startline/version.cpp
         utils.cpp
         main.cpp

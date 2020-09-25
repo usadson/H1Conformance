@@ -8,12 +8,14 @@
 
 #include "method.hpp"
 #include "version.hpp"
+#include "request_target.hpp"
 
 class StartLineCollection : public SuiteCollection {
 public:
     StartLineCollection(Configuration &configuration)
             : SuiteCollection(configuration) {
         suites.push_back(std::make_unique<Method>(configuration, name));
+        suites.push_back(std::make_unique<RequestTarget>(configuration, name));
         suites.push_back(std::make_unique<Version>(configuration, name));
     }
 
