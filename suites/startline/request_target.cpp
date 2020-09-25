@@ -13,6 +13,17 @@ RequestTarget::Request(const std::string &requestTarget) {
 }
 
 void
+RequestTarget::RunAuthorityInNonConnect() {
+    const auto absoluteResponse = Request(configuration.hostname);
+
+    if (absoluteResponse.statusCode != 400) {
+        Failure() << "AuthorityInNonConnect: server accepted authority-form as request-target in a non-CONNECT request. Status-code: "
+                  << absoluteResponse.statusCode << " (" << absoluteResponse.reasonPhrase << ").\n"
+                  << "Read more in RFC 7230 Section 5.3(.3)";
+    }
+}
+
+void
 RequestTarget::RunValidAbsolutePath() {
     const auto absoluteResponse = Request("http://" + configuration.hostname + "/");
     const auto originResponse = Request("/");
@@ -27,4 +38,5 @@ RequestTarget::RunValidAbsolutePath() {
 void
 RequestTarget::Run() {
     RunValidAbsolutePath();
+    RunAuthorityInNonConnect();
 }
