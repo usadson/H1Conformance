@@ -27,9 +27,12 @@ private:
     RunAuthorityInNonConnect();
 
     void
-    RunValidAbsolutePath();
+    RunInvalidAbsolutePath();
 
     void
     RunValidOriginWithQuery();
+
+    void
+    RunValidAbsolutePath();
 
 };

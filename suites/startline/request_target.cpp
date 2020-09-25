@@ -35,6 +35,20 @@ RequestTarget::RunAuthorityInNonConnect() {
 }
 
 void
+RequestTarget::RunInvalidAbsolutePath() {
+    // Note: The query isn't required to have the syntax of application/x-www-form-urlencoded
+    for (const auto &requestTarget : {"httpinvalid://" + configuration.hostname, "ssh://" + configuration.hostname}) {
+        const auto absoluteResponse = Request(requestTarget);
+
+        if (absoluteResponse.statusCode != 400) {
+            Failure() << "InvalidAbsolutePath: server accepted invalid absolute-form: \"" << requestTarget << "\" as request-target. Status-code: "
+                      << absoluteResponse.statusCode << " (" << absoluteResponse.reasonPhrase << ").\n"
+                      << "Read more in RFC 7230 Section 5.3(.4)";
+        }
+    }
+}
+
+void
 RequestTarget::RunValidAbsolutePath() {
     const auto absoluteResponse = Request("http://" + configuration.hostname + "/");
     const auto originResponse = Request("/");
@@ -64,6 +78,7 @@ void
 RequestTarget::Run() {
     RunAsteriskInNonOptions();
     RunAuthorityInNonConnect();
+    RunInvalidAbsolutePath();
     RunValidAbsolutePath();
     RunValidOriginWithQuery();
 }
