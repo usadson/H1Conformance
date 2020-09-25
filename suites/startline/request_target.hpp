@@ -29,4 +29,7 @@ private:
     void
     RunValidAbsolutePath();
 
+    void
+    RunValidOriginWithQuery();
+
 };

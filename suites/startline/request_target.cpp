@@ -47,8 +47,23 @@ RequestTarget::RunValidAbsolutePath() {
 }
 
 void
+RequestTarget::RunValidOriginWithQuery() {
+    // Note: The query isn't required to have the syntax of application/x-www-form-urlencoded
+    for (const auto *requestTarget : {"/?a=b", "/?a=b&b=c", "/?????", "/?/test"}) {
+        const auto absoluteResponse = Request(requestTarget);
+
+        if (absoluteResponse.statusCode >= 400) {
+            Failure() << "ValidOriginWithQuery: server rejected origin with query: \"" << requestTarget << "\" as request-target. Status-code: "
+                      << absoluteResponse.statusCode << " (" << absoluteResponse.reasonPhrase << ").\n"
+                      << "Read more in RFC 7230 Section 5.3(.3)";
+        }
+    }
+}
+
+void
 RequestTarget::Run() {
     RunAsteriskInNonOptions();
     RunAuthorityInNonConnect();
     RunValidAbsolutePath();
+    RunValidOriginWithQuery();
 }
