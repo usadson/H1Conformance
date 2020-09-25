@@ -7,6 +7,7 @@ set(SOURCES
         http/response_reader.cpp
         suites/basic/host_header.cpp
         suites/basic/minimal_request.cpp
+        suites/startline/method.cpp
         suites/startline/version.cpp
         utils.cpp
         main.cpp
