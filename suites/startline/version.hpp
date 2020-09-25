@@ -29,4 +29,7 @@ private:
     void
     RunHigherMinor();
 
+    void
+    RunHigherMajor();
+
 };

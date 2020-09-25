@@ -71,8 +71,18 @@ Version::RunHigherMinor() {
 }
 
 void
+Version::RunHigherMajor() {
+    const auto response = Request("GET / HTTP/5.1\r\nHost: " + configuration.hostname + "\r\n\r\n");
+    if (response.statusCode != 505) {
+        Failure() << "RunVersionOld: Server accepted HTTP/5.1 (higher major) with status-code: " << response.statusCode << " (" << response.reasonPhrase
+                  << "). The server should've rejected the request with status-code 505 (HTTP Version Not Supported) because the major is significant and specifies the syntax & parsing of the message.";
+    }
+}
+
+void
 Version::Run() {
     RunOld();
     RunIncorrectCase();
     RunHigherMinor();
+    RunHigherMajor();
 }
