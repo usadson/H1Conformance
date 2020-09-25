@@ -29,5 +29,9 @@ private:
 
     void
     RunVersionOld();
+
+    void
+    RunVersionIncorrectCase();
+
 };
 
