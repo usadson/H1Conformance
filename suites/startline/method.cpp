@@ -2,19 +2,20 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "invalid_request_line.hpp"
+#include "method.hpp"
 #include "../../http/response_reader.hpp"
 
-std::uint16_t
-InvalidRequestLine::Request(const std::string &request) {
+HTTPResponse
+Method::Request(const std::string &request) {
     Reconnect();
     connection->Write(request);
-    const HTTPResponse response = HTTPResponseReader(connection.get()).Read();
-    return response.statusCode;
+    return HTTPResponseReader(connection.get()).Read();
 }
 
+
+
 void
-InvalidRequestLine::RunMethodValid() {
+Method::RunValid() {
     const std::string suffix = " / HTTP/1.1\r\nHost: " + configuration.hostname + "\r\n\r\n";
     for (std::size_t i = 0; i < 15; i++) {
         const auto method = configuration.utils.GenerateRandomLengthToken();
@@ -30,7 +31,7 @@ InvalidRequestLine::RunMethodValid() {
 }
 
 void
-InvalidRequestLine::RunMethodInvalid() {
+Method::RunInvalid() {
     const std::string suffix = " / HTTP/1.1\r\nHost: " + configuration.hostname + "\r\n\r\n";
     std::array illegalCharacters = {
             '\x00', '\x01', '\x02', '\x03', '\x04', '\x05', '\x07', '\x08',
@@ -61,7 +62,7 @@ InvalidRequestLine::RunMethodInvalid() {
 }
 
 void
-InvalidRequestLine::Run() {
-    RunMethodValid();
-    RunMethodInvalid();
+Method::Run() {
+    RunValid();
+    RunInvalid();
 }
