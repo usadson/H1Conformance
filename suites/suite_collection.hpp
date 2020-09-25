@@ -29,7 +29,7 @@ public:
             } catch (const ConnectionException &exception) {
                 std::cerr << "[ConnectionException] (" << exception.Stage() << ") " << exception.Message() << '\n';
             } catch (const HTTPException &exception) {
-                std::cerr << "[HTTPException] An HTTP error was detected."
+                std::cerr << "[HTTPException] An HTTP error was detected in suite: " << suite->CollectionName() << "." << suite->Name()
                           << "\n\tTag: " << exception.Tag()
                           << "\n\tMessage: " << exception.Message()
                           << "\n\tSpecification: " << exception.Specification()
