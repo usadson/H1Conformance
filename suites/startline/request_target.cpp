@@ -61,6 +61,22 @@ RequestTarget::RunValidAbsolutePath() {
 }
 
 void
+RequestTarget::RunValidAbsoluteWithQuery() {
+    const std::string prefix = "http://" + configuration.hostname;
+    // Note: The query isn't required to have the syntax of application/x-www-form-urlencoded
+    for (const auto *requestTarget : {"/?a=b", "/?a=b&b=c", "/?????", "/?/test"}) {
+        const auto absoluteResponse = Request(prefix + requestTarget);
+
+        if (absoluteResponse.statusCode >= 400) {
+            Failure() << "ValidOriginWithQuery: server rejected absolute-form with query: \"" << prefix << requestTarget
+                      << "\" as request-target. Status-code: "
+                      << absoluteResponse.statusCode << " (" << absoluteResponse.reasonPhrase << ").\n"
+                      << "Read more in RFC 7230 Section 5.3(.3)";
+        }
+    }
+}
+
+void
 RequestTarget::RunValidOriginWithQuery() {
     // Note: The query isn't required to have the syntax of application/x-www-form-urlencoded
     for (const auto *requestTarget : {"/?a=b", "/?a=b&b=c", "/?????", "/?/test"}) {
@@ -80,5 +96,6 @@ RequestTarget::Run() {
     RunAuthorityInNonConnect();
     RunInvalidAbsolutePath();
     RunValidAbsolutePath();
+    RunValidAbsoluteWithQuery();
     RunValidOriginWithQuery();
 }

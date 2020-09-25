@@ -30,6 +30,9 @@ private:
     RunInvalidAbsolutePath();
 
     void
+    RunValidAbsoluteWithQuery();
+
+    void
     RunValidOriginWithQuery();
 
     void
