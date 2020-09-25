@@ -12,19 +12,17 @@ Method::Request(const std::string &request) {
     return HTTPResponseReader(connection.get()).Read();
 }
 
-
-
 void
 Method::RunValid() {
     const std::string suffix = " / HTTP/1.1\r\nHost: " + configuration.hostname + "\r\n\r\n";
     for (std::size_t i = 0; i < 15; i++) {
         const auto method = configuration.utils.GenerateRandomLengthToken();
-        const auto statusCode = Request(method + suffix);
+        const auto response = Request(method + suffix);
 
-        if (statusCode >= 400 && statusCode < 500) {
+        if (response.statusCode >= 400 && response.statusCode < 500) {
             auto message = Failure()
                     << "Server denied valid method: \"" << method
-                    << "\" with status-code: " << statusCode
+                    << "\" with status-code: " << response.statusCode << " (" << response.reasonPhrase << ')'
                     << ". A method is defined as a token by RFC 7230 Section 3.1.1. A token is defined as 1*tchar by RFC 7230 Section 3.2.6. A tchar is defined as a VCHAR without delimiters.";
         }
     }
@@ -50,12 +48,12 @@ Method::RunInvalid() {
             method[oindex] = illegalCharacters[iindex];
         }
 
-        const auto statusCode = Request(method + suffix);
+        const auto response = Request(method + suffix);
 
-        if (statusCode != 400) {
+        if (response.statusCode != 400) {
             auto message = Failure()
                     << "Server accepted invalid method: \"" << method
-                    << "\" with non-400 status-code: " << statusCode
+                    << "\" with non-400 status-code: " << response.statusCode << " (" << response.reasonPhrase << ')'
                     << ". A method is defined as a token by RFC 7230 Section 3.1.1. A token is defined as 1*tchar by RFC 7230 Section 3.2.6. A tchar is defined as a VCHAR without delimiters.";
         }
     }
