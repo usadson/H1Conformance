@@ -35,10 +35,10 @@ void
 InvalidRequestLine::RunMethodInvalid() {
     const std::string suffix = " / HTTP/1.1\r\nHost: " + configuration.hostname + "\r\n\r\n";
     std::array illegalCharacters = {
-//            '\x00', '\x01', '\x02', '\x03', '\x04', '\x05', '\x07', '\x08',
-//            '\x09', '\x0A', '\x0B', '\x0C', '\x0D', '\x0E', '\x0F',
-//            '\x10', '\x11', '\x12', '\x13', '\x14', '\x15', '\x17', '\x18',
-//            '\x19', '\x1A', '\x1B', '\x1C', '\x1D', '\x1E', '\x1F',
+            '\x00', '\x01', '\x02', '\x03', '\x04', '\x05', '\x07', '\x08',
+            '\x09', '\x0A', '\x0B', '\x0C', '\x0D', '\x0E', '\x0F',
+            '\x10', '\x11', '\x12', '\x13', '\x14', '\x15', '\x17', '\x18',
+            '\x19', '\x1A', '\x1B', '\x1C', '\x1D', '\x1E', '\x1F',
             '"', '(', ')', ',', '/', ':', ';', '<', '=',
             '>', '?', '@', '[', '\\', ']', '{', '}'
     };
