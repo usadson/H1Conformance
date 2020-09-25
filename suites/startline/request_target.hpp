@@ -20,4 +20,7 @@ private:
     HTTPResponse
     Request(const std::string &request);
 
+    void
+    RunValidAbsolutePath();
+
 };

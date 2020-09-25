@@ -6,13 +6,25 @@
 #include "../../http/response_reader.hpp"
 
 HTTPResponse
-RequestTarget::Request(const std::string &request) {
+RequestTarget::Request(const std::string &requestTarget) {
     Reconnect();
-    connection->Write(request);
+    connection->Write("GET " + requestTarget + " HTTP/1.1\r\nHost: " + configuration.hostname + "\r\n\r\n");
     return HTTPResponseReader(connection.get()).Read();
 }
 
 void
-RequestTarget::Run() {
+RequestTarget::RunValidAbsolutePath() {
+    const auto absoluteResponse = Request("http://" + configuration.hostname + "/");
+    const auto originResponse = Request("/");
 
+    if (absoluteResponse.statusCode != originResponse.statusCode) {
+        Failure() << "ValidAbsolutePath: server doesn't recognize absolute-path as a request-target. Status-code: "
+                  << absoluteResponse.statusCode << " (" << absoluteResponse.reasonPhrase << ").\n"
+                  << "Read more in RFC 7230 Section 5.3(.2)";
+    }
+}
+
+void
+RequestTarget::Run() {
+    RunValidAbsolutePath();
 }
