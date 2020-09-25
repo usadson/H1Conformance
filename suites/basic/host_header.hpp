@@ -25,5 +25,8 @@ private:
     void
     RunWithMultiple();
 
+    void
+    RunWithoutHTTP10();
+
 };
 

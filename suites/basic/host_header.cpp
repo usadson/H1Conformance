@@ -21,7 +21,7 @@ HostHeader::RunWith() {
     connection->Write("GET / HTTP/1.1\r\nHost: " + configuration.hostname + "\r\n\r\n");
     const HTTPResponse response = HTTPResponseReader(connection.get()).Read();
 
-    if (response.statusCode <= 0 || response.statusCode >= 400) {
+    if (response.statusCode <= 100 || response.statusCode >= 400) {
         Failure() << "RunWith: Failed with status code " << response.statusCode << " and reason phrase \"" << response.reasonPhrase << '"';
     }
 }
@@ -36,10 +36,23 @@ HostHeader::RunWithMultiple() {
 }
 
 void
+HostHeader::RunWithoutHTTP10() {
+    connection->Write("GET / HTTP/1.0\r\n\r\n");
+    const HTTPResponse response = HTTPResponseReader(connection.get()).Read();
+
+    if (response.statusCode <= 100 || response.statusCode >= 400) {
+        Failure() << "Server rejected HTTP/1.0 request without (optional in HTTP/1.0) Host header. The server must only reject HTTP/1.1 requests without a Host header. The status-code was: " << response.statusCode << " and reason-phrase: \"" << response.reasonPhrase << "\"";
+    }
+}
+
+
+void
 HostHeader::Run() {
     RunWith();
     Reconnect();
     RunWithout();
     Reconnect();
     RunWithMultiple();
+    Reconnect();
+    RunWithoutHTTP10();
 }
