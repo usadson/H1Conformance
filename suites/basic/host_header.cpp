@@ -35,6 +35,18 @@ HostHeader::RunWithMultiple() {
     }
 }
 
+/**
+ * Make a HTTP/1.0 request without the 'Host' header.
+ *
+ * Since HTTP/1.1 the header is required, but in HTTP/1.0 not. Servers must
+ * deny HTTP/1.1 requests without a 'Host' header, and only HTTP/1.1 requests.
+ *
+ * Excerpt from RFC 7230 Section 5.4.:
+ * "A server MUST respond with a 400 (Bad Request) status code to any
+ * HTTP/1.1 request message that lacks a Host header field and to any
+ * request message that contains more than one Host header field or a
+ * Host header field with an invalid field-value."
+ */
 void
 HostHeader::RunWithoutHTTP10() {
     connection->Write("GET / HTTP/1.0\r\n\r\n");
