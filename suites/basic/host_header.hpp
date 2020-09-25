@@ -34,5 +34,8 @@ private:
     void
     RunWithInaccurateValue();
 
+    void
+    RunWithIllegalValue();
+
 };
 

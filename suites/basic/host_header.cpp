@@ -119,6 +119,17 @@ HostHeader::RunWithInaccurateValue() {
 }
 
 void
+HostHeader::RunWithIllegalValue() {
+    for (const auto &string : {".test", "local..host"}) {
+        connection->Write("GET / HTTP/1.1\r\nHost: " + std::string(string) + "\r\n\r\n");
+        const HTTPResponse response = HTTPResponseReader(connection.get()).Read();
+        if (response.statusCode != 400) {
+            Failure() << "RunWithIllegalValue: an illegal Host header was accepted by the server with status-code " << response.statusCode << " (" << response.reasonPhrase << "). When the server receives a Host header with an invalid field-value, the server must respond with status-code 404 (Bad Request)";
+        }
+    }
+}
+
+void
 HostHeader::Run() {
     RunWith();
     Reconnect();
@@ -131,4 +142,6 @@ HostHeader::Run() {
     RunWithPort();
     Reconnect();
     RunWithInaccurateValue();
+    Reconnect();
+    RunWithIllegalValue();
 }
