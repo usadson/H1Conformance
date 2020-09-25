@@ -45,6 +45,10 @@ Version::RunIncorrectCase() {
                 }
             }
         } catch (const HTTPException &exception) {
+            if (exception.Message() =="HTTP Version not in format of \"HTTP/?.?\", was \"<html>\r\n\"") {
+                Warning() << "RunLowerCase: Server tried to handle HTTP/1.1 request as an HTTP/0.9 request, when supplied version was: \"" + std::string(version) + "\"";
+                continue;
+            }
             Warning() << "RunLowerCase: Server sent an invalid HTTP/1.x response. This is probably because the server tried to handle the request as a HTTP/0.9 request."
                       << "Response exception information: "
                       << "\n\tTag: " << exception.Tag()
