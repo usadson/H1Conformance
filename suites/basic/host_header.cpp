@@ -72,6 +72,30 @@ HostHeader::RunWithoutHTTP10() {
     }
 }
 
+/**
+ * Make a HTTP/1.1 request with the 'Host' header, but include the port number.
+ *
+ * The port number is optional, but is allowed.
+ *
+ * Excerpt from RFC 7230 Section 5.4.:
+ * "The "Host" header field in a request provides the host and port
+ * information from the target URI, enabling the origin server to
+ * distinguish among resources while servicing requests for multiple
+ * host names on a single IP address.
+ *
+ *  Host = uri-host [ ":" port ] ; Section 2.7.1"
+ */
+void
+HostHeader::RunWithPort() {
+    std::stringstream request;
+    request << "GET / HTTP/1.1\r\nHost: " << configuration.hostname << ':' << configuration.port << "\r\n\r\n";
+    connection->Write(request.str());
+    const HTTPResponse response = HTTPResponseReader(connection.get()).Read();
+
+    if (response.statusCode <= 100 || response.statusCode >= 400) {
+        Failure() << "RunWithPort: UA may include a port number with the hostname, but the server rejected the request with status-code " << response.statusCode << " (" << response.reasonPhrase << ')';
+    }
+}
 
 void
 HostHeader::Run() {
@@ -82,4 +106,6 @@ HostHeader::Run() {
     RunWithMultiple();
     Reconnect();
     RunWithoutHTTP10();
+    Reconnect();
+    RunWithPort();
 }
