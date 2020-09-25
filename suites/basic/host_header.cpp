@@ -97,6 +97,27 @@ HostHeader::RunWithPort() {
     }
 }
 
+/**
+ * The server must also reject the request if the 'Host' header is inaccurate
+ * (i.e. not (one of) the domain name(s) of the server).
+ *
+ * The value is www.test.invalid, and isn't assignable as per RFC 2606, so is
+ * future-proof.
+ *
+ * Excerpt from RFC 7230 Section 5.4.:
+ * "A server MUST respond with a 400 (Bad Request) status code to any
+ * HTTP/1.1 request message ... or a Host header field with an invalid
+ * field-value."
+ */
+void
+HostHeader::RunWithInaccurateValue() {
+    connection->Write("GET / HTTP/1.1\r\nHost: www.test.invalid\r\n\r\n");
+    const HTTPResponse response = HTTPResponseReader(connection.get()).Read();
+    if (response.statusCode != 400) {
+        Failure() << "RunWithInaccurateValue: an invalid Host header was accepted by the server with status-code " << response.statusCode << " (" << response.reasonPhrase << "). When the server receives a Host header with an invalid field-value, the server must respond with status-code 404 (Bad Request)";
+    }
+}
+
 void
 HostHeader::Run() {
     RunWith();
@@ -108,4 +129,6 @@ HostHeader::Run() {
     RunWithoutHTTP10();
     Reconnect();
     RunWithPort();
+    Reconnect();
+    RunWithInaccurateValue();
 }
