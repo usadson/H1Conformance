@@ -6,6 +6,13 @@
 
 #include "../../http/response_reader.hpp"
 
+/* This suite checks the requirements of RFC 7230 Section 5.4.
+ * Read more at: https://tools.ietf.org/html/rfc7230#section-5.4 */
+
+/**
+ * Servers receiving a HTTP/1.1 request without a 'Host' header should reject
+ * the request with a 400 (Bad Request) status-code response.
+ */
 void
 HostHeader::RunWithout() {
     connection->Write("GET / HTTP/1.1\r\n\r\n");
@@ -16,6 +23,10 @@ HostHeader::RunWithout() {
     }
 }
 
+/**
+ * A HTTP/1.1 GET request with a Host header is the minimal required metadata
+ * in a request, thus is expected to be accepted.
+ */
 void
 HostHeader::RunWith() {
     connection->Write("GET / HTTP/1.1\r\nHost: " + configuration.hostname + "\r\n\r\n");
@@ -26,6 +37,10 @@ HostHeader::RunWith() {
     }
 }
 
+/**
+ * A HTTP/1.1 request with multiple Host headers should be rejected with a
+ * 400 (Bad Request) status code.
+ */
 void
 HostHeader::RunWithMultiple() {
     connection->Write("GET / HTTP/1.1\r\nHost: " + configuration.hostname + "\r\nHost: " + configuration.hostname + "\r\n\r\n");
