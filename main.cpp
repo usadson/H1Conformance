@@ -6,13 +6,16 @@
 
 #include "configuration.hpp"
 #include "suites/basic/basic_collection.hpp"
+#include "suites/startline/startline_collection.hpp"
 
 int main() {
     Configuration configuration{ "127.0.0.1", 80, "localhost" };
 
     auto collection = BasicSuiteCollection(configuration);
+    auto collection2 = StartLineCollection(configuration);
 
     collection.RunSuites();
+    collection2.RunSuites();
 
     return 0;
 }

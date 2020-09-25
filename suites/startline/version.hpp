@@ -4,28 +4,26 @@
 
 #pragma once
 
-#include <string>
-
 #include "../suite.hpp"
+#include "../../http/response.hpp"
 
-class InvalidRequestLine : public Suite {
+class Version : public Suite {
 public:
-    InvalidRequestLine(Configuration &configuration, const std::string &collectionName) :
-            Suite(configuration, collectionName, "InvalidRequestLine") {
+    Version(Configuration &configuration, const std::string &collectionName) :
+            Suite(configuration, collectionName, "Version") {
     }
 
     void
     Run() override;
 
 private:
-    [[nodiscard]] std::uint16_t
+    HTTPResponse
     Request(const std::string &request);
 
     void
-    RunMethodValid();
+    RunOld();
 
     void
-    RunMethodInvalid();
+    RunIncorrectCase();
 
 };
-

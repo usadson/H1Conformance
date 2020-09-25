@@ -2,12 +2,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include <random>
 #include "invalid_request_line.hpp"
 #include "../../http/response_reader.hpp"
 
 std::uint16_t
 InvalidRequestLine::Request(const std::string &request) {
+    Reconnect();
     connection->Write(request);
     const HTTPResponse response = HTTPResponseReader(connection.get()).Read();
     return response.statusCode;
@@ -26,8 +26,6 @@ InvalidRequestLine::RunMethodValid() {
                     << "\" with status-code: " << statusCode
                     << ". A method is defined as a token by RFC 7230 Section 3.1.1. A token is defined as 1*tchar by RFC 7230 Section 3.2.6. A tchar is defined as a VCHAR without delimiters.";
         }
-
-        Reconnect();
     }
 }
 
@@ -59,44 +57,6 @@ InvalidRequestLine::RunMethodInvalid() {
                     << "\" with non-400 status-code: " << statusCode
                     << ". A method is defined as a token by RFC 7230 Section 3.1.1. A token is defined as 1*tchar by RFC 7230 Section 3.2.6. A tchar is defined as a VCHAR without delimiters.";
         }
-
-        Reconnect();
-    }
-}
-
-
-/**
- * The HTTP-version is defined as:
- *   HTTP-version  = HTTP-name "/" DIGIT "." DIGIT
- *   HTTP-name     = %x48.54.54.50 ; "HTTP", case-sensitive
- */
-void
-InvalidRequestLine::RunVersionOld() {
-    connection->Write("GET / HTTP/1.0\r\nHost: " + configuration.hostname + "\r\n\r\n");
-    const HTTPResponse response = HTTPResponseReader(connection.get()).Read();
-    if (response.statusCode <= 100 || response.statusCode >= 400) {
-        Failure() << "RunVersionOld: Server reject HTTP/1.0 request with status-code: " << response.statusCode << " (" << response.reasonPhrase << ')';
-    }
-}
-
-void
-InvalidRequestLine::RunVersionIncorrectCase() {
-    for (const char *version : {"HTTp/1.1", "HTtp/1.1", "Http/1.1", "http/1.1", "hTTP/1.1", "htTP/1.1", "httP/1.1", "htTp/1.1", "hTtp/1.1"}) {
-        std::stringstream request;
-        request << "GET / " << version << "\r\nHost: " << configuration.hostname << "\r\n\r\n";
-        connection->Write(request.str());
-        const HTTPResponse response = HTTPResponseReader(connection.get()).Read();
-        if (response.statusCode != 400) {
-            if (response.statusCode > 400) {
-                Failure() << "RunVersionIncorrectCase: Server rejected invalid HTTP-version: \"" << version
-                          << "\" incorrectly, a 400 (Bad Request) status-code was expected, but got a "
-                          << response.statusCode << " (" << response.reasonPhrase << ')';
-            } else {
-                Failure() << "RunVersionIncorrectCase: Server accepted malformed HTTP-version: \"" << version
-                          << "\", a 400 (Bad Request) status-code was expected, but got a "
-                          << response.statusCode << " (" << response.reasonPhrase << ')';
-            }
-        }
     }
 }
 
@@ -104,7 +64,4 @@ void
 InvalidRequestLine::Run() {
     RunMethodValid();
     RunMethodInvalid();
-
-    RunVersionOld();
-    RunVersionIncorrectCase();
 }

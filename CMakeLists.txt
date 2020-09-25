@@ -8,6 +8,7 @@ set(SOURCES
         suites/basic/host_header.cpp
         suites/basic/invalid_request_line.cpp
         suites/basic/minimal_request.cpp
+        suites/startline/version.cpp
         utils.cpp
         main.cpp
 )
