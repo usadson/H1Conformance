@@ -13,6 +13,17 @@ RequestTarget::Request(const std::string &requestTarget) {
 }
 
 void
+RequestTarget::RunAsteriskInNonOptions() {
+    const auto absoluteResponse = Request("*");
+
+    if (absoluteResponse.statusCode != 400) {
+        Failure() << "AsteriskInNonOptions: server accepted asterisk-form as request-target in a non-OPTIONS request. Status-code: "
+                  << absoluteResponse.statusCode << " (" << absoluteResponse.reasonPhrase << ").\n"
+                  << "Read more in RFC 7230 Section 5.3(.4)";
+    }
+}
+
+void
 RequestTarget::RunAuthorityInNonConnect() {
     const auto absoluteResponse = Request(configuration.hostname);
 
@@ -37,6 +48,7 @@ RequestTarget::RunValidAbsolutePath() {
 
 void
 RequestTarget::Run() {
-    RunValidAbsolutePath();
+    RunAsteriskInNonOptions();
     RunAuthorityInNonConnect();
+    RunValidAbsolutePath();
 }

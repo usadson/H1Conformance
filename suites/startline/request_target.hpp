@@ -21,6 +21,9 @@ private:
     Request(const std::string &request);
 
     void
+    RunAsteriskInNonOptions();
+
+    void
     RunAuthorityInNonConnect();
 
     void
