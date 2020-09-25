@@ -22,7 +22,7 @@ void
 Version::RunOld() {
     const auto response = Request("GET / HTTP/1.0\r\nHost: " + configuration.hostname + "\r\n\r\n");
     if (response.statusCode <= 100 || response.statusCode >= 400) {
-        Failure() << "RunVersionOld: Server reject HTTP/1.0 request with status-code: " << response.statusCode << " (" << response.reasonPhrase << ')';
+        Failure() << "VersionOld: Server reject HTTP/1.0 request with status-code: " << response.statusCode << " (" << response.reasonPhrase << ')';
     }
 }
 
@@ -35,21 +35,21 @@ Version::RunIncorrectCase() {
             const HTTPResponse response = Request(request.str());
             if (response.statusCode != 400) {
                 if (response.statusCode > 400) {
-                    Failure() << "RunVersionIncorrectCase: Server rejected invalid HTTP-version: \"" << version
+                    Failure() << "IncorrectCase: Server rejected invalid HTTP-version: \"" << version
                               << "\" incorrectly, a 400 (Bad Request) status-code was expected, but got a "
                               << response.statusCode << " (" << response.reasonPhrase << ')';
                 } else {
-                    Failure() << "RunVersionIncorrectCase: Server accepted malformed HTTP-version: \"" << version
+                    Failure() << "IncorrectCase: Server accepted malformed HTTP-version: \"" << version
                               << "\", a 400 (Bad Request) status-code was expected, but got a "
                               << response.statusCode << " (" << response.reasonPhrase << ')';
                 }
             }
         } catch (const HTTPException &exception) {
             if (exception.Message() =="HTTP Version not in format of \"HTTP/?.?\", was \"<html>\r\n\"") {
-                Warning() << "RunLowerCase: Server tried to handle HTTP/1.1 request as an HTTP/0.9 request, when supplied version was: \"" + std::string(version) + "\"";
+                Warning() << "IncorrectCase: Server tried to handle HTTP/1.1 request as an HTTP/0.9 request, when supplied version was: \"" + std::string(version) + "\"";
                 continue;
             }
-            Warning() << "RunLowerCase: Server sent an invalid HTTP/1.x response. This is probably because the server tried to handle the request as a HTTP/0.9 request."
+            Warning() << "IncorrectCase: Server sent an invalid HTTP/1.x response. This is probably because the server tried to handle the request as a HTTP/0.9 request."
                       << "Response exception information: "
                       << "\n\tTag: " << exception.Tag()
                       << "\n\tMessage: " << exception.Message()
