@@ -65,7 +65,18 @@ InvalidRequestLine::RunMethodInvalid() {
 }
 
 void
+InvalidRequestLine::RunVersionOld() {
+    connection->Write("GET / HTTP/1.0\r\nHost: " + configuration.hostname + "\r\n\r\n");
+    const HTTPResponse response = HTTPResponseReader(connection.get()).Read();
+    if (response.statusCode <= 100 || response.statusCode >= 400) {
+        Failure() << "RunVersionOld: Server reject HTTP/1.0 request with status-code: " << response.statusCode << " (" << response.reasonPhrase << ')';
+    }
+}
+
+void
 InvalidRequestLine::Run() {
     RunMethodValid();
     RunMethodInvalid();
+
+    RunVersionOld();
 }

@@ -26,5 +26,8 @@ private:
 
     void
     RunMethodInvalid();
+
+    void
+    RunVersionOld();
 };
 
