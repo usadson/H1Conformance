@@ -6,12 +6,14 @@
 
 #include "../suite_collection.hpp"
 
+#include "method.hpp"
 #include "version.hpp"
 
 class StartLineCollection : public SuiteCollection {
 public:
     StartLineCollection(Configuration &configuration)
             : SuiteCollection(configuration) {
+        suites.push_back(std::make_unique<Method>(configuration, name));
         suites.push_back(std::make_unique<Version>(configuration, name));
     }
 
