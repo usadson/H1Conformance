@@ -62,7 +62,17 @@ Version::RunIncorrectCase() {
 }
 
 void
+Version::RunHigherMinor() {
+    const auto response = Request("GET / HTTP/1.2\r\nHost: " + configuration.hostname + "\r\n\r\n");
+    if (response.statusCode >= 400) {
+        Failure() << "RunVersionOld: Server rejected HTTP/1.2 (higher minor) with status-code: " << response.statusCode << " (" << response.reasonPhrase
+                  << "). The server should've accepted the request, because the minor is insignificant in terms of parsing and core semantics.";
+    }
+}
+
+void
 Version::Run() {
     RunOld();
     RunIncorrectCase();
+    RunHigherMinor();
 }

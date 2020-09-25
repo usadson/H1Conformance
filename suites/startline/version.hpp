@@ -26,4 +26,7 @@ private:
     void
     RunIncorrectCase();
 
+    void
+    RunHigherMinor();
+
 };
