@@ -126,6 +126,7 @@ HostHeader::RunWithIllegalValue() {
         if (response.statusCode != 400) {
             Failure() << "RunWithIllegalValue: an illegal Host header was accepted by the server with status-code " << response.statusCode << " (" << response.reasonPhrase << "). When the server receives a Host header with an invalid field-value, the server must respond with status-code 404 (Bad Request)";
         }
+        Reconnect();
     }
 }
 
