@@ -11,7 +11,7 @@ class ConnectionException : public std::exception {
 public:
     inline
     ConnectionException(std::string stage, std::string message)
-        : stage(stage), message(message) {
+        : stage(std::move(stage)), message(std::move(message)) {
     }
 
     [[nodiscard]] inline constexpr const std::string &
