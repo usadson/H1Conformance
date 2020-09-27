@@ -11,13 +11,14 @@
 
 class BasicSuiteCollection : public SuiteCollection {
 public:
+    explicit
     BasicSuiteCollection(Configuration &configuration)
         : SuiteCollection(configuration) {
         suites.push_back(std::make_unique<HostHeader>(configuration, name));
         suites.push_back(std::make_unique<MinimalRequest>(configuration, name));
     }
 
-    ~BasicSuiteCollection() = default;
+    ~BasicSuiteCollection() override = default;
 
 private:
     const std::string name = "BasicSuite";
