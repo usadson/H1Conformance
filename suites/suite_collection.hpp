@@ -27,7 +27,7 @@ public:
                 suite->Prepare();
                 suite->Run();
             } catch (const ConnectionException &exception) {
-                std::cerr << "[ConnectionException] (" << exception.Stage() << ") " << exception.Message() << '\n';
+                std::cerr << "[ConnectionException] In suite: " << suite->CollectionName() << "." << suite->Name() << " (" << exception.Stage() << ") " << exception.Message() << '\n';
             } catch (const HTTPException &exception) {
                 std::cerr << "[HTTPException] An HTTP error was detected in suite: " << suite->CollectionName() << "." << suite->Name()
                           << "\n\tTag: " << exception.Tag()
