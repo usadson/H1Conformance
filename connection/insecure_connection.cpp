@@ -18,7 +18,7 @@ InsecureConnection::InsecureConnection(const char *address, std::uint16_t port)
         throw ConnectionException("connecting", "Failed to create a socket");
     }
 
-    struct sockaddr_in remote{0};
+    struct sockaddr_in remote{};
     remote.sin_family = AF_INET;
     remote.sin_port = htons(port);
     remote.sin_addr.s_addr = inet_addr(address);
