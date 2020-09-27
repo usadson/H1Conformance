@@ -12,6 +12,7 @@
 
 class StartLineCollection : public SuiteCollection {
 public:
+    explicit
     StartLineCollection(Configuration &configuration)
             : SuiteCollection(configuration) {
         suites.push_back(std::make_unique<Method>(configuration, name));
@@ -19,7 +20,7 @@ public:
         suites.push_back(std::make_unique<Version>(configuration, name));
     }
 
-    ~StartLineCollection() = default;
+    ~StartLineCollection() override = default;
 
 private:
     const std::string name = "StartLineCollection";
