@@ -131,6 +131,15 @@ HostHeader::RunWithIllegalValue() {
 }
 
 void
+HostHeader::RunWithIncorrectPortNumber() {
+    connection->Write("GET / HTTP/1.1\r\nHost: " + configuration.hostname + ':' + std::to_string(configuration.port % 8 + 1) + ":\r\n\r\n");
+    const HTTPResponse response = HTTPResponseReader(connection.get()).Read();
+    if (response.statusCode != 400) {
+        Failure() << "RunWithIllegalValue: a different port than the port of the server was provided in the 'Host' header field, but the server responded with a status-code of  " << response.statusCode << " (" << response.reasonPhrase << "). When the server receives a Host header with an invalid field-value, the server must respond with status-code 404 (Bad Request)";
+    }
+}
+
+void
 HostHeader::Run() {
     RunWith();
     Reconnect();
@@ -145,4 +154,6 @@ HostHeader::Run() {
     RunWithInaccurateValue();
     Reconnect();
     RunWithIllegalValue();
+    Reconnect();
+    RunWithIncorrectPortNumber();
 }
