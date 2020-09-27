@@ -43,5 +43,8 @@ private:
     void
     RunWithEmptyPortNumber();
 
+    void
+    RunWithNaNPortNumber();
+
 };
 

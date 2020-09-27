@@ -149,6 +149,18 @@ HostHeader::RunWithEmptyPortNumber() {
 }
 
 void
+HostHeader::RunWithNaNPortNumber() {
+    for (const auto &string : {"junk", "1t", "t1t", "t1"}) {
+        connection->Write("GET / HTTP/1.1\r\nHost: " + configuration.hostname + ':' + string + "\r\n\r\n");
+        const HTTPResponse response = HTTPResponseReader(connection.get()).Read();
+        if (response.statusCode != 400) {
+            Failure() << "RunWithIllegalValue: an illegal port was provided with the Host header: \"" << configuration.hostname << ':' << string << "\", but was accepted by the server with status-code " << response.statusCode << " (" << response.reasonPhrase << "). When the server receives a Host header with an invalid field-value, the server must respond with status-code 404 (Bad Request)";
+        }
+        Reconnect();
+    }
+}
+
+void
 HostHeader::Run() {
     RunWith();
     Reconnect();
@@ -167,4 +179,6 @@ HostHeader::Run() {
     RunWithIncorrectPortNumber();
     Reconnect();
     RunWithEmptyPortNumber();
+    Reconnect();
+    RunWithNaNPortNumber();
 }
