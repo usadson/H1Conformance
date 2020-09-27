@@ -8,9 +8,10 @@
 
 class InsecureConnection : public Connection {
 public:
+    explicit
     InsecureConnection(const char *address, std::uint16_t port=80);
 
-    ~InsecureConnection() noexcept;
+    ~InsecureConnection() noexcept override;
 
     char
     ReadChar() override;
