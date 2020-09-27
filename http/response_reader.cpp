@@ -64,7 +64,7 @@ ConvertCharToSingleDigit(char c) noexcept {
 
 void
 HTTPResponseReader::ReadStatusCode() {
-    std::array<char, 3> buffer;
+    std::array<char, 3> buffer{};
     connection->Read(buffer);
     if (!EnsureCharIsDigit(buffer[0]) || !EnsureCharIsDigit(buffer[1]) || !EnsureCharIsDigit(buffer[2])) {
         throw HTTPException(__PRETTY_FUNCTION__ , std::string("A status-code consists of 3 DIGITS, was: '") + buffer[0] + buffer[1] + buffer[2],
