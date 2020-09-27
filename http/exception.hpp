@@ -6,12 +6,13 @@
 
 #include <exception>
 #include <string>
+#include <utility>
 
 class HTTPException : public std::exception {
 public:
     inline
     HTTPException(std::string tag, std::string message, std::string specification, std::string url)
-            : tag(tag), message(message), specification(specification), url(url) {
+            : tag(std::move(tag)), message(std::move(message)), specification(std::move(specification)), url(std::move(url)) {
     }
 
     [[nodiscard]] inline constexpr const std::string &
