@@ -46,8 +46,8 @@ public:
 
 private:
     StreamType *stream;
-    bool owning = false;
     const std::string suffix;
     const FunctionType destructorHookFunction;
+    bool owning = false;
     const UserDataType userData;
 };
