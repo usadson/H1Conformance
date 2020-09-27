@@ -44,16 +44,6 @@ public:
         return *this;
     }
 
-    [[nodiscard]] constexpr inline StreamType *
-    Stream() noexcept {
-        return stream;
-    }
-
-    [[nodiscard]] constexpr inline const StreamType *
-    Stream() const noexcept {
-        return stream;
-    }
-
 private:
     StreamType *stream;
     bool owning = false;

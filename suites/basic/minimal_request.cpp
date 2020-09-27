@@ -4,8 +4,6 @@
 
 #include "minimal_request.hpp"
 
-#include <iostream>
-
 #include "../../http/response_reader.hpp"
 
 void

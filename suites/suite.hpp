@@ -70,7 +70,7 @@ public:
         return StreamWrapper(new std::stringstream, "", "", &FailureHook, true, this);
     }
 
-    inline StreamWrapper<std::nullptr_t>
+    inline auto
     Warning() {
         return StreamWrapper(&std::cout, std::string("[Warning] (") + collectionName + '/' + suiteName + ") ");
     }
