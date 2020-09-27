@@ -14,4 +14,6 @@ set(SOURCES
         main.cpp
 )
 
+add_compile_options(-Wall -Wextra -pedantic -Werror)
+
 add_executable(H1Conformance ${SOURCES})
