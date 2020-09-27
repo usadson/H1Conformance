@@ -12,33 +12,10 @@
 #include "../stream_wrapper.hpp"
 
 class Suite;
-
-class SuiteFailureException : public std::exception {
-public:
-    inline
-    SuiteFailureException(const Suite &suite, std::string &&message) noexcept
-        : suite(suite), message(message) {
-    }
-
-    [[nodiscard]] constexpr inline const std::string &
-    Message() const noexcept {
-        return message;
-    }
-
-    [[nodiscard]] constexpr inline const Suite &
-    Suite() const noexcept {
-        return suite;
-    }
-
-private:
-    const class Suite &suite;
-    const std::string message;
-};
+#include "suite_exception.hpp"
 
 inline void
-FailureHook(std::stringstream *stream, const Suite *suite) {
-    throw SuiteFailureException(*suite, stream->str());
-}
+FailureHook(std::stringstream *stream, const Suite *suite);
 
 class Suite {
 public:
@@ -92,3 +69,8 @@ protected:
     const std::string &collectionName;
     const char *suiteName;
 };
+
+inline void
+FailureHook(std::stringstream *stream, const Suite *suite) {
+    throw SuiteFailureException(*suite, stream->str());
+}
