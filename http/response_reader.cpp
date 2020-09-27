@@ -59,7 +59,7 @@ EnsureCharIsDigit(char c) {
 
 constexpr std::uint8_t
 ConvertCharToSingleDigit(char c) noexcept {
-    return c - '0';
+    return static_cast<std::uint8_t>(c - '0');
 }
 
 void
@@ -73,9 +73,10 @@ HTTPResponseReader::ReadStatusCode() {
         // TODO Maybe mention DIGIT spec?
     }
 
-    response.statusCode = ConvertCharToSingleDigit(buffer[0]) * 100 +
-                          ConvertCharToSingleDigit(buffer[1]) * 10 +
-                          ConvertCharToSingleDigit(buffer[2]);
+    response.statusCode = static_cast<std::uint16_t>(
+            ConvertCharToSingleDigit(buffer[0]) * 100 +
+            ConvertCharToSingleDigit(buffer[1]) * 10 +
+            ConvertCharToSingleDigit(buffer[2]));
 
     char next = connection->ReadChar();
     if (next != ' ') {

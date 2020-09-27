@@ -27,7 +27,7 @@ public:
     template<typename T>
     inline void
     Read(T &t) {
-        return Read(&*std::begin(t), std::distance(std::begin(t), std::end(t)));
+        return Read(&*std::begin(t), static_cast<std::size_t>(std::distance(std::begin(t), std::end(t))));
     }
 
     virtual void
@@ -36,7 +36,7 @@ public:
     template<typename T>
     inline void
     Write(const T &t) {
-        return Write(&*std::cbegin(t), std::distance(std::cbegin(t), std::cend(t)));
+        return Write(&*std::cbegin(t), static_cast<std::size_t>(std::distance(std::cbegin(t), std::cend(t))));
     }
 
     [[nodiscard]] inline constexpr const char *
