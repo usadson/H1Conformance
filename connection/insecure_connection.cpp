@@ -60,6 +60,10 @@ InsecureConnection::Read(char *buffer, std::size_t count) {
             throw ConnectionException("reading", "Failed to read(2)");
         }
 
+        if (ret == 0) {
+            throw ConnectionException("reading", "EOF reached");
+        }
+
         count -= ret;
         buffer += ret;
     } while (count > 0);
