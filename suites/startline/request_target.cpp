@@ -65,6 +65,9 @@ RequestTarget::RunValidAbsoluteWithQuery() {
     const std::string prefix = "http://" + configuration.hostname;
     // Note: The query isn't required to have the syntax of application/x-www-form-urlencoded
     for (const auto *requestTarget : {"/?a=b", "/?a=b&b=c", "/?????", "/?/test"}) {
+        std::string s = std::string("\"") + requestTarget + "\"";
+        PushSection(s.c_str());
+
         const auto absoluteResponse = Request(prefix + requestTarget);
 
         if (absoluteResponse.statusCode >= 400) {
@@ -73,6 +76,8 @@ RequestTarget::RunValidAbsoluteWithQuery() {
                       << absoluteResponse.statusCode << " (" << absoluteResponse.reasonPhrase << ").\n"
                       << "Read more in RFC 7230 Section 5.3(.3)";
         }
+
+        PopSection();
     }
 }
 
@@ -80,6 +85,8 @@ void
 RequestTarget::RunValidOriginWithQuery() {
     // Note: The query isn't required to have the syntax of application/x-www-form-urlencoded
     for (const auto *requestTarget : {"/?a=b", "/?a=b&b=c", "/?????", "/?/test"}) {
+        PushSection(requestTarget);
+
         const auto absoluteResponse = Request(requestTarget);
 
         if (absoluteResponse.statusCode >= 400) {
@@ -87,10 +94,13 @@ RequestTarget::RunValidOriginWithQuery() {
                       << absoluteResponse.statusCode << " (" << absoluteResponse.reasonPhrase << ").\n"
                       << "Read more in RFC 7230 Section 5.3(.3)";
         }
+
+        PopSection();
     }
 }
 
-#define ADD_FUNC(i, s) { \
+#define ADD_FUNC(s) { \
+    i++;                  \
     names[i] = #s; \
     functions[i] = &RequestTarget::s; \
 }
@@ -102,14 +112,15 @@ RequestTarget::Run() {
     std::array<void (RequestTarget::*)(), size> functions;
     std::array<const char *, size> names;
 
-    ADD_FUNC(0, RunAsteriskInNonOptions);
-    ADD_FUNC(1, RunAuthorityInNonConnect);
-    ADD_FUNC(2, RunInvalidAbsolutePath);
-    ADD_FUNC(3, RunValidAbsolutePath);
-    ADD_FUNC(4, RunValidAbsoluteWithQuery);
-    ADD_FUNC(5, RunValidOriginWithQuery);
+    std::size_t i = 0;
+    ADD_FUNC(RunAsteriskInNonOptions);
+    ADD_FUNC(RunAuthorityInNonConnect);
+    ADD_FUNC(RunInvalidAbsolutePath);
+    ADD_FUNC(RunValidAbsolutePath);
+    ADD_FUNC(RunValidAbsoluteWithQuery);
+    ADD_FUNC(RunValidOriginWithQuery);
 
-    for (std::size_t i = 0; i < size; i++) {
+    for (std::size_t j = 0; j < size; j++) {
         PushSection(names[i]);
         (this->*functions[i])();
         PopSection();
