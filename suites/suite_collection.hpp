@@ -27,9 +27,9 @@ public:
                 suite->Prepare();
                 suite->Run();
             } catch (const ConnectionException &exception) {
-                std::cerr << "[ConnectionException] In suite: " << suite->CollectionName() << "." << suite->Name() << " (" << exception.Stage() << ") " << exception.Message() << '\n';
+                std::cerr << "[ConnectionException] In: " << suite->QualifiedName() << " (" << exception.Stage() << ") " << exception.Message() << '\n';
             } catch (const HTTPException &exception) {
-                std::cerr << "[HTTPException] An HTTP error was detected in suite: " << suite->CollectionName() << "." << suite->Name()
+                std::cerr << "[HTTPException] An HTTP error was detected in: " << suite->QualifiedName()
                           << "\n\tTag: " << exception.Tag()
                           << "\n\tMessage: " << exception.Message()
                           << "\n\tSpecification: " << exception.Specification()
@@ -37,10 +37,10 @@ public:
                           << '\n';
             } catch (const SuiteFailureException &exception) {
                 // TODO Check if other suites must be ran if previous failed
-                std::cerr << "Suite " << exception.Suite().CollectionName() << "." << exception.Suite().Name()
+                std::cerr << "In " << suite->QualifiedName()
                           << " failed: " << exception.Message() << '\n';
             } catch (const std::exception &exception) {
-                std::cerr << "Suite exception: " << exception.what() << '\n';
+                std::cerr << "Suite exception: " << exception.what() << " in " << suite->QualifiedName() << '\n';
             }
         }
     }
