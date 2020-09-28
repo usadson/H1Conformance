@@ -17,9 +17,6 @@ public:
     Run() override;
 
 private:
-    HTTPResponse
-    Request(const std::string &request);
-
     void
     RunInvalid();
 

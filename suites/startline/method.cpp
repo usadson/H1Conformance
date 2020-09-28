@@ -4,13 +4,7 @@
 
 #include "method.hpp"
 #include "../../http/response_reader.hpp"
-
-HTTPResponse
-Method::Request(const std::string &request) {
-    Reconnect();
-    connection->Write(request);
-    return HTTPResponseReader(connection.get()).Read();
-}
+#include "../../connection/exception.hpp"
 
 void
 Method::RunValid() {
@@ -19,7 +13,7 @@ Method::RunValid() {
     const std::string suffix = " / HTTP/1.1\r\nHost: " + configuration.hostname + "\r\n\r\n";
     for (std::size_t i = 0; i < 15; i++) {
         const auto method = configuration.utils.GenerateRandomLengthToken();
-        const auto response = Request(method + suffix);
+        const auto response = RequestMethod(method + suffix);
 
         if (response.statusCode >= 400 && response.statusCode < 500) {
             auto message = Failure()
@@ -52,7 +46,7 @@ Method::RunInvalid() {
             method[methodIndex] = illegalCharacters[illegalIndex];
         }
 
-        const auto response = Request(method + suffix);
+        const auto response = RequestMethod(method + suffix);
 
         if (response.statusCode != 400) {
             auto message = Failure()
