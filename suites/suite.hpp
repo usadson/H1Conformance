@@ -50,7 +50,7 @@ public:
 
     inline auto
     Warning() {
-        return StreamWrapper(&std::cout, std::string("[Warning] (") + collectionName + '/' + suiteName + ") ");
+        return StreamWrapper(&std::cout, "[Warning] (" + QualifiedName() + ") ");
     }
 
     [[nodiscard]] inline std::string
