@@ -6,13 +6,6 @@
 #include "../../http/response_reader.hpp"
 #include "../../http/exception.hpp"
 
-HTTPResponse
-Version::Request(const std::string &request) {
-    Reconnect();
-    connection->Write(request);
-    return HTTPResponseReader(connection.get()).Read();
-}
-
 /**
  * The HTTP-version is defined as:
  *   HTTP-version  = HTTP-name "/" DIGIT "." DIGIT
@@ -20,7 +13,7 @@ Version::Request(const std::string &request) {
  */
 void
 Version::RunOld() {
-    const auto response = Request("GET / HTTP/1.0\r\nHost: " + configuration.hostname + "\r\n\r\n");
+    const auto response = RequestVersion("HTTP/1.0");
     if (response.statusCode <= 100 || response.statusCode >= 400) {
         Failure() << "VersionOld: Server reject HTTP/1.0 request with status-code: " << response.statusCode << " (" << response.reasonPhrase << ')';
     }
@@ -30,9 +23,7 @@ void
 Version::RunIncorrectCase() {
     for (const char *version : {"HTTp/1.1", "HTtp/1.1", "Http/1.1", "http/1.1", "hTTP/1.1", "htTP/1.1", "httP/1.1", "htTp/1.1", "hTtp/1.1"}) {
         try {
-            std::stringstream request;
-            request << "GET / " << version << "\r\nHost: " << configuration.hostname << "\r\n\r\n";
-            const HTTPResponse response = Request(request.str());
+            const HTTPResponse response = RequestVersion(version);
             if (response.statusCode != 400) {
                 if (response.statusCode > 400) {
                     Failure() << "IncorrectCase: Server rejected invalid HTTP-version: \"" << version
@@ -63,7 +54,7 @@ Version::RunIncorrectCase() {
 
 void
 Version::RunHigherMinor() {
-    const auto response = Request("GET / HTTP/1.2\r\nHost: " + configuration.hostname + "\r\n\r\n");
+    const auto response = RequestVersion("HTTP/1.2");
     if (response.statusCode >= 400) {
         Failure() << "RunVersionOld: Server rejected HTTP/1.2 (higher minor) with status-code: " << response.statusCode << " (" << response.reasonPhrase
                   << "). The server should've accepted the request, because the minor is insignificant in terms of parsing and core semantics.";
@@ -72,7 +63,7 @@ Version::RunHigherMinor() {
 
 void
 Version::RunHigherMajor() {
-    const auto response = Request("GET / HTTP/5.1\r\nHost: " + configuration.hostname + "\r\n\r\n");
+    const auto response = RequestVersion("HTTP/5.1");
     if (response.statusCode != 505) {
         Failure() << "RunVersionOld: Server accepted HTTP/5.1 (higher major) with status-code: " << response.statusCode << " (" << response.reasonPhrase
                   << "). The server should've rejected the request with status-code 505 (HTTP Version Not Supported) because the major is significant and specifies the syntax & parsing of the message.";
