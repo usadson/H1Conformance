@@ -7,7 +7,6 @@
 
 HTTPResponse
 Method::Request(const std::string &request) {
-    SuiteSectionGuard(*this, __FUNCTION__);
     Reconnect();
     connection->Write(request);
     return HTTPResponseReader(connection.get()).Read();
@@ -15,7 +14,7 @@ Method::Request(const std::string &request) {
 
 void
 Method::RunValid() {
-    SuiteSectionGuard(*this, __FUNCTION__);
+    PushSection(__FUNCTION__);
 
     const std::string suffix = " / HTTP/1.1\r\nHost: " + configuration.hostname + "\r\n\r\n";
     for (std::size_t i = 0; i < 15; i++) {
@@ -29,11 +28,12 @@ Method::RunValid() {
                     << ". A method is defined as a token by RFC 7230 Section 3.1.1. A token is defined as 1*tchar by RFC 7230 Section 3.2.6. A tchar is defined as a VCHAR without delimiters.";
         }
     }
+    PopSection();
 }
 
 void
 Method::RunInvalid() {
-    SuiteSectionGuard(*this, __FUNCTION__);
+    PushSection(__FUNCTION__);
     const std::string suffix = " / HTTP/1.1\r\nHost: " + configuration.hostname + "\r\n\r\n";
     std::array illegalCharacters = {
             '\x00', '\x01', '\x02', '\x03', '\x04', '\x05', '\x07', '\x08',
@@ -61,6 +61,7 @@ Method::RunInvalid() {
                     << ". A method is defined as a token by RFC 7230 Section 3.1.1. A token is defined as 1*tchar by RFC 7230 Section 3.2.6. A tchar is defined as a VCHAR without delimiters.";
         }
     }
+    PopSection();
 }
 
 void
