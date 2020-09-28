@@ -12,6 +12,7 @@
 #include "../stream_wrapper.hpp"
 
 class Suite;
+
 #include "suite_exception.hpp"
 
 inline void
@@ -64,14 +65,6 @@ public:
         return stream.str();
     }
 
-protected:
-    std::unique_ptr<Connection> connection;
-    Configuration &configuration;
-
-    const std::string &collectionName;
-    const char *suiteName;
-    std::vector<const char *> sections;
-
     inline void
     PushSection(const char *s) noexcept {
         sections.push_back(s);
@@ -82,9 +75,31 @@ protected:
         sections.pop_back();
     }
 
+protected:
+    std::unique_ptr<Connection> connection;
+    Configuration &configuration;
+
+    const std::string &collectionName;
+    const char *suiteName;
+    std::vector<const char *> sections;
 };
 
 inline void
 FailureHook(std::stringstream *stream, const Suite *suite) {
     throw SuiteFailureException(*suite, stream->str());
 }
+
+class SuiteSectionGuard {
+public:
+    inline
+    SuiteSectionGuard(Suite &suite, const char *name) noexcept : suite(suite) {
+        suite.PushSection(name);
+    }
+
+    ~SuiteSectionGuard() noexcept {
+        suite.PopSection();
+    }
+
+private:
+    Suite &suite;
+};
