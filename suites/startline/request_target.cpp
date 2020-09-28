@@ -5,16 +5,9 @@
 #include "request_target.hpp"
 #include "../../http/response_reader.hpp"
 
-HTTPResponse
-RequestTarget::Request(const std::string &requestTarget) {
-    Reconnect();
-    connection->Write("GET " + requestTarget + " HTTP/1.1\r\nHost: " + configuration.hostname + "\r\n\r\n");
-    return HTTPResponseReader(connection.get()).Read();
-}
-
 void
 RequestTarget::RunAsteriskInNonOptions() {
-    const auto absoluteResponse = Request("*");
+    const auto absoluteResponse = RequestPath("*");
 
     if (absoluteResponse.statusCode != 400) {
         Failure() << "AsteriskInNonOptions: server accepted asterisk-form as request-target in a non-OPTIONS request. Status-code: "
@@ -25,7 +18,7 @@ RequestTarget::RunAsteriskInNonOptions() {
 
 void
 RequestTarget::RunAuthorityInNonConnect() {
-    const auto absoluteResponse = Request(configuration.hostname);
+    const auto absoluteResponse = RequestPath(configuration.hostname);
 
     if (absoluteResponse.statusCode != 400) {
         Failure() << "AuthorityInNonConnect: server accepted authority-form as request-target in a non-CONNECT request. Status-code: "
@@ -38,7 +31,7 @@ void
 RequestTarget::RunInvalidAbsolutePath() {
     // Note: The query isn't required to have the syntax of application/x-www-form-urlencoded
     for (const auto &requestTarget : {"httpinvalid://" + configuration.hostname, "ssh://" + configuration.hostname}) {
-        const auto absoluteResponse = Request(requestTarget);
+        const auto absoluteResponse = RequestPath(requestTarget);
 
         if (absoluteResponse.statusCode != 400) {
             Failure() << "InvalidAbsolutePath: server accepted invalid absolute-form: \"" << requestTarget << "\" as request-target. Status-code: "
@@ -50,8 +43,8 @@ RequestTarget::RunInvalidAbsolutePath() {
 
 void
 RequestTarget::RunValidAbsolutePath() {
-    const auto absoluteResponse = Request("http://" + configuration.hostname + "/");
-    const auto originResponse = Request("/");
+    const auto absoluteResponse = RequestPath("http://" + configuration.hostname + "/");
+    const auto originResponse = RequestPath("/");
 
     if (absoluteResponse.statusCode != originResponse.statusCode) {
         Failure() << "ValidAbsolutePath: server doesn't recognize absolute-path as a request-target. Status-code: "
@@ -68,7 +61,7 @@ RequestTarget::RunValidAbsoluteWithQuery() {
         std::string s = std::string("\"") + requestTarget + "\"";
         PushSection(s.c_str());
 
-        const auto absoluteResponse = Request(prefix + requestTarget);
+        const auto absoluteResponse = RequestPath(prefix + requestTarget);
 
         if (absoluteResponse.statusCode >= 400) {
             Failure() << "ValidOriginWithQuery: server rejected absolute-form with query: \"" << prefix << requestTarget
@@ -87,7 +80,7 @@ RequestTarget::RunValidOriginWithQuery() {
     for (const auto *requestTarget : {"/?a=b", "/?a=b&b=c", "/?????", "/?/test"}) {
         PushSection(requestTarget);
 
-        const auto absoluteResponse = Request(requestTarget);
+        const auto absoluteResponse = RequestPath(requestTarget);
 
         if (absoluteResponse.statusCode >= 400) {
             Failure() << "ValidOriginWithQuery: server rejected origin with query: \"" << requestTarget << "\" as request-target. Status-code: "
