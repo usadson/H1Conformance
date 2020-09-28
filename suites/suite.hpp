@@ -52,14 +52,16 @@ public:
         return StreamWrapper(&std::cout, std::string("[Warning] (") + collectionName + '/' + suiteName + ") ");
     }
 
-    [[nodiscard]] constexpr inline const std::string &
-    CollectionName() const noexcept {
-        return collectionName;
-    }
+    [[nodiscard]] inline std::string
+    QualifiedName() const noexcept {
+        std::stringstream stream;
+        stream << collectionName << '.' << suiteName;
 
-    [[nodiscard]] constexpr inline const char *
-    Name() const noexcept {
-        return suiteName;
+        for (const auto &section : sections) {
+            stream << '.' << section;
+        }
+
+        return stream.str();
     }
 
 protected:
@@ -68,6 +70,18 @@ protected:
 
     const std::string &collectionName;
     const char *suiteName;
+    std::vector<const char *> sections;
+
+    inline void
+    PushSection(const char *s) noexcept {
+        sections.push_back(s);
+    }
+
+    inline void
+    PopSection() noexcept {
+        sections.pop_back();
+    }
+
 };
 
 inline void
