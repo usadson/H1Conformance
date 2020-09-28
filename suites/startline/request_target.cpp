@@ -90,12 +90,28 @@ RequestTarget::RunValidOriginWithQuery() {
     }
 }
 
+#define ADD_FUNC(i, s) { \
+    names[i] = #s; \
+    functions[i] = &RequestTarget::s; \
+}
+
 void
 RequestTarget::Run() {
-    RunAsteriskInNonOptions();
-    RunAuthorityInNonConnect();
-    RunInvalidAbsolutePath();
-    RunValidAbsolutePath();
-    RunValidAbsoluteWithQuery();
-    RunValidOriginWithQuery();
+    constexpr std::size_t size = 6;
+
+    std::array<void (RequestTarget::*)(), size> functions;
+    std::array<const char *, size> names;
+
+    ADD_FUNC(0, RunAsteriskInNonOptions);
+    ADD_FUNC(1, RunAuthorityInNonConnect);
+    ADD_FUNC(2, RunInvalidAbsolutePath);
+    ADD_FUNC(3, RunValidAbsolutePath);
+    ADD_FUNC(4, RunValidAbsoluteWithQuery);
+    ADD_FUNC(5, RunValidOriginWithQuery);
+
+    for (std::size_t i = 0; i < size; i++) {
+        PushSection(names[i]);
+        (this->*functions[i])();
+        PopSection();
+    }
 }
