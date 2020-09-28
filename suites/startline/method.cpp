@@ -7,6 +7,7 @@
 
 HTTPResponse
 Method::Request(const std::string &request) {
+    SuiteSectionGuard(*this, __FUNCTION__);
     Reconnect();
     connection->Write(request);
     return HTTPResponseReader(connection.get()).Read();
@@ -14,6 +15,8 @@ Method::Request(const std::string &request) {
 
 void
 Method::RunValid() {
+    SuiteSectionGuard(*this, __FUNCTION__);
+
     const std::string suffix = " / HTTP/1.1\r\nHost: " + configuration.hostname + "\r\n\r\n";
     for (std::size_t i = 0; i < 15; i++) {
         const auto method = configuration.utils.GenerateRandomLengthToken();
@@ -30,6 +33,7 @@ Method::RunValid() {
 
 void
 Method::RunInvalid() {
+    SuiteSectionGuard(*this, __FUNCTION__);
     const std::string suffix = " / HTTP/1.1\r\nHost: " + configuration.hostname + "\r\n\r\n";
     std::array illegalCharacters = {
             '\x00', '\x01', '\x02', '\x03', '\x04', '\x05', '\x07', '\x08',
