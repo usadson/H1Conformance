@@ -14,6 +14,9 @@
 class Suite;
 
 #include "suite_exception.hpp"
+#include "../http/response.hpp"
+#include "../http/response_reader.hpp"
+#include "../connection/exception.hpp"
 
 inline void
 FailureHook(std::stringstream *stream, const Suite *suite);
@@ -82,6 +85,37 @@ protected:
     const std::string &collectionName;
     const char *suiteName;
     std::vector<const char *> sections;
+    static constexpr const std::size_t maxConnectionRetries = 3;
+
+    inline HTTPResponse
+    DoRequest(const std::string &request) {
+        std::uint8_t repeat = 0;
+        while (true) {
+            try {
+                Reconnect();
+                connection->Write(request);
+                return HTTPResponseReader(connection.get()).Read();
+            } catch (const ConnectionException &exception) {
+                if (++repeat == maxConnectionRetries)
+                    throw exception;
+            }
+        }
+    }
+
+    inline HTTPResponse
+    RequestMethod(const std::string &method) {
+        return DoRequest(method + " / HTTP/1.1\r\nHost: " + configuration.hostname + "\r\n\r\n");
+    }
+
+    inline HTTPResponse
+    RequestPath(const std::string &requestTarget) {
+        return DoRequest("GET " + requestTarget + " HTTP/1.1\r\nHost: " + configuration.hostname + "\r\n\r\n");
+    }
+
+    inline HTTPResponse
+    RequestVersion(const std::string &version) {
+        return DoRequest("GET / " + version + "\r\nHost: " + configuration.hostname + "\r\n\r\n");
+    }
 };
 
 inline void
